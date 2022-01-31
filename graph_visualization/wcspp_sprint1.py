@@ -6,7 +6,7 @@ from networkx.generators.random_graphs import (fast_gnp_random_graph,
 import numpy as np
 
 def main():
-    x = np.zeros((5,5)) # position matrix
+    x = np.zeros((5,5)) # connection/position matrix
     w = np.zeros((5,5)) # weight matrix
     c = np.zeros((5,5)) # cost matrix
     
