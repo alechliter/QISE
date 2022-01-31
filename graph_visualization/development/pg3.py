@@ -1,8 +1,8 @@
 import random as r
-import networkx as nx
 import matplotlib.pyplot as plt
-from networkx.generators.random_graphs import fast_gnp_random_graph, random_kernel_graph
-
+import networkx as nx
+from networkx.generators.random_graphs import (fast_gnp_random_graph,
+                                               random_kernel_graph)
 
 # DiGraph Testing (Directed Graph)
 
