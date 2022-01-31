@@ -6,9 +6,9 @@ from networkx.generators.random_graphs import (fast_gnp_random_graph,
 import numpy as np
 
 def main():
-    x = np.zeros((5,5))
-    w = np.zeros((5,5))
-    c = np.zeros((5,5))
+    x = np.zeros((5,5)) # position matrix
+    w = np.zeros((5,5)) # weight matrix
+    c = np.zeros((5,5)) # cost matrix
     
     x[0][1] = 1
     x[0][3] = 1
@@ -37,6 +37,7 @@ def main():
     print("Graph Direction Matrix:")
     print(x)
     
+    # generating graph based on the position matrix
     G = nx.DiGraph()
     G.add_nodes_from(get_seq(5))
     G.add_edges_from(get_arcs(x))
@@ -44,10 +45,11 @@ def main():
     
     print("\n")
     
+    # create an array of all simple paths from the source node 0 to the destination node 4
     print("All Simple Paths:")
     all_paths = nx.all_simple_paths(G, source=0, target=4)    
     
-    wc_paths = []
+    wc_paths = [] # an array of paths that follow the weight constraint
     for path in all_paths:
         x=[]
         y=[]
@@ -57,11 +59,13 @@ def main():
         print(path,end="\t")
         print("Total Weight, Cost: "+str(sum(x))+", "+str(sum(y)))    
         if sum(x)<=6:
+            # applyting a weight contrainst of w = 6
             wc_paths.append((path,sum(y)))
 
     print("\nWeight Constrained Paths:")
     least_cost_path = wc_paths[0]
     
+    # find the path with the lowest cost in the weight constrained paths
     for path in wc_paths:
         if path[1]<least_cost_path[1]:
             least_cost_path[0] = path[0]
@@ -82,7 +86,7 @@ def main():
     for a digraph matrix this is the "to" and "from" of each arc
     """
 def get_arcs(x):
-    xnz = np.nonzero(x)
+    xnz = np.nonzero(x) # returns a tuple of arrays of indices of elements that are nonzero for each dimension of the array 
     arcs = []
     for i in range(0,len(xnz[0])):
         arcs.append([xnz[0][i],xnz[1][i]])
@@ -113,6 +117,7 @@ def print_graph(G, picture_name=""):
     print("Edges of Graph:")
     print(G.edges())
 
+    # (hardcode) manually adds the labels of the cost and weight to each edge
     elbs = {
         (0,1): "1,1",
         (0,3): "1,1",
