@@ -1,3 +1,5 @@
+import numpy
+
 from collections.abc import Sequence, Mapping
 
 from .Graph import Graph
@@ -19,7 +21,15 @@ class WCGraph(Graph):
         Args:
             edges (Mapping): a dictionary of edges to their weights and costs {(from, to): (weight, cost)}
         """
-        # TODO: implement
+        self.wc_edges = edges
+
+        # Initialize the base class Graph
+        super(WCGraph, self).__init__(edges.keys())
+
+        # Generate Weight and Cost Matricies
+        self._generate_weight_matrix()
+        self._generate_cost_matrix()
+
         pass
 
     def find_wc_paths(self, weight: int) -> Sequence:
@@ -57,3 +67,11 @@ class WCGraph(Graph):
         """
         # TODO: implement
         return 0.0
+
+    def _generate_weight_matrix(self) -> numpy.ndarray:
+        # TODO: implement
+        pass
+
+    def _generate_cost_matrix(self) -> numpy.ndarray:
+        # TODO: implement
+        pass
