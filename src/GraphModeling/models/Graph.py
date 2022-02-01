@@ -2,28 +2,25 @@ import matplotlib.pyplot as pyplot
 import networkx
 import numpy
 
-from collections.abc import Sequence
+from collections.abc import Sequence, Mapping
 
 class Graph:
     """ The Graph class allows for the generation of directed graphs containing weights and costs.
 
     members:
-        gen_matrix (numpy.ndarray): general matrix containing weight, cost, and position information in one matrix
-        connection_matrix (numpy.ndarray): matrix of the directed edges between nodes
-        weight_matrix (numpy.ndarray): matrix of the weights for each edge
-        cost_matrix (numpy.ndarray): matrix of the costs for each edge 
-        networkx_graph (networkx.DiGraph): networkx object representation of graph
+        + edges (Sequence): a list of (from, to) node tuples
+        + direction_matrix (numpy.ndarray): matrix of the directed edges between nodes
+        + networkx_graph (networkx.DiGraph): networkx object representation of graph
     """
     
-    def __init__(self, matrix: numpy.ndarray) -> None:
+    def __init__(self, edges: Sequence) -> None:
         """Creates a new instance of the Graph class. Initializes the graph's 
         matricies based on the given general matrix.  
 
         Args:
-            matrix (numpy.ndarray): a general matrix that contains information on the cost 
-                and weight for each edge between nodes in the graph.
+            edges (Sequence): a list of edges (node from-to tuples)
         """
-        self.gen_matrix = matrix
+        self.edges = edges
 
         # TODO: initialize connection, weight, and cost matrices using gen_matrix
 
