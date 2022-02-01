@@ -59,7 +59,7 @@ def main():
         print(path,end="\t")
         print("Total Weight, Cost: "+str(sum(x))+", "+str(sum(y)))    
         if sum(x)<=6:
-            # applyting a weight contrainst of w = 6
+            # applying a weight constraint of w = 6
             wc_paths.append((path,sum(y)))
 
     print("\nWeight Constrained Paths:")
