@@ -47,13 +47,13 @@ class Graph:
         print("Edges of Graph:")
         print(self.networkx_graph.edges())
 
-        networkx.draw_networkx(self.networkx_graph, pos = networkx.circular_layout(self.networkx_graph), node_color = self.get_color_map(3))
+        networkx.draw_networkx(self.networkx_graph, pos = networkx.circular_layout(self.networkx_graph), node_color = self.get_color_map(len(self.networkx_graph)))
         
         if picture_name != "":
             pyplot.savefig(picture_name) #save as png
         pyplot.show() #display
 
-    def get_simple_paths(self, source_node: int, destination_node: int) -> Sequence:
+    def get_simple_paths(self, source_node: int = 1, destination_node: int | None = None) -> Sequence:
         """
         Returns an array of simple paths in the graph
 
@@ -65,6 +65,9 @@ class Graph:
             Sequence: a list of paths (a path is an array of nodes)
         """
         paths = []
+
+        if not destination_node:
+            destination_node = len(Graph.get_nodes(self.edges))
 
         if self.networkx_graph:
             paths = networkx.all_simple_paths(self.networkx_graph, source_node, destination_node)
