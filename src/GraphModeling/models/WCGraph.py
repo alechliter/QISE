@@ -11,7 +11,8 @@ class WCGraph(Graph):
 
     members: 
         + weight_matrix (numpy.ndarray): matrix of the weights for each edge
-        + cost_matrix (numpy.ndarray): matrix of the costs for each edge 
+        + cost_matrix (numpy.ndarray): matrix of the costs for each edge
+        + wc_edges (Mapping): dictionary of edges to (weight, cost)
 
     note: this might be useless/overkill for our purposes, we could just add everything to the graph class.
     """
@@ -75,7 +76,7 @@ class WCGraph(Graph):
 
         return lowest_cost_path
 
-    def calc_path_weight_cost(self, path: Sequence) -> Sequence:
+    def calc_path_weight_cost(self, path: Sequence) -> Tuple:
         """calculates the total weight and cost along a given path
 
         Args:
@@ -84,14 +85,15 @@ class WCGraph(Graph):
         Returns:
             Sequence: the total [weight, cost] along the path
         """
-        total_weight_cost = [0, 0]
+        total_weight = 0
+        total_cost = 0
 
         for index in range(len(path) - 1):
             edge = (path[index], path[index + 1])
-            total_weight_cost[0] += self.wc_edges[edge][0] # weight
-            total_weight_cost[1] += self.wc_edges[edge][1] # cost
+            total_weight += self.wc_edges[edge][0] # weight
+            total_cost += self.wc_edges[edge][1] # cost
 
-        return total_weight_cost
+        return (total_weight, total_cost)
 
     def print_graph(self, picture_name: str = "") -> None:
         """

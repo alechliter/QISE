@@ -31,8 +31,8 @@ def test_graph(graph: WCGraph, weight):
 
     print("Lowest Cost Weight Constrained Simple Path (W = 5):")
     path = graph.find_lowest_cost_path(wc_paths)
-    print(path)
-    print(f"Weight: {graph.calc_path_weight_cost(path)[0]}, Cost: {graph.calc_path_weight_cost(path)[1]}")
+    print(f"|   {path}")
+    print(f"|   Weight: {graph.calc_path_weight_cost(path)[0]}, Cost: {graph.calc_path_weight_cost(path)[1]}")
 
     graph.print_graph()
 
