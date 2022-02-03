@@ -2,7 +2,7 @@ import matplotlib.pyplot as pyplot
 import networkx
 import numpy
 
-from collections.abc import Sequence
+from collections.abc import Sequence, Mapping
 
 class Graph:
     """ 
@@ -33,27 +33,30 @@ class Graph:
         self._initialize_networkx_graph()
 
         
-    def print_graph(self, source_node: int = 0, destination_node: int = -1, picture_name: str = "") -> None:
+    def print_graph(self, picture_name: str = "", edge_labels: Mapping | None = None) -> None:
         """
         Prints the graph using the networkx graph representation and pyplot.
 
         Args:
-            source_node (int, optional): The source node of a path. Defaults to 0.
-            destination_node (int, optional): The destination node of a path. Defaults to -1.
             picture_name (str, optional): The name to save the graph image as. Defaults to "".
+            edge_labels (Mapping | None, optional): The dictionary of edges to labels. Defaults to None.
         """
         print("Nodes on Graph:")
-        print(self.networkx_graph.nodes())
+        print(f"|    {self.networkx_graph.nodes()}")
         print("Edges of Graph:")
-        print(self.networkx_graph.edges())
+        print(f"|    {self.networkx_graph.edges()}")
 
-        networkx.draw_networkx(self.networkx_graph, pos = networkx.circular_layout(self.networkx_graph), node_color = self.get_color_map(len(self.networkx_graph)))
+        networkx.draw_networkx(self.networkx_graph, 
+            pos = networkx.circular_layout(self.networkx_graph), node_color = self.get_color_map(len(self.networkx_graph)))
         
+        if edge_labels:
+            networkx.draw_networkx_edge_labels(self.networkx_graph, edge_labels = edge_labels, pos = networkx.circular_layout(self.networkx_graph))
+
         if picture_name != "":
             pyplot.savefig(picture_name) #save as png
         pyplot.show() #display
 
-    def get_simple_paths(self, source_node: int = 1, destination_node: int | None = None) -> Sequence:
+    def get_simple_paths(self, source_node: int = 0, destination_node: int | None = None) -> Sequence:
         """
         Returns an array of simple paths in the graph
 
@@ -67,7 +70,7 @@ class Graph:
         paths = []
 
         if not destination_node:
-            destination_node = len(Graph.get_nodes(self.edges))
+            destination_node = len(Graph.get_nodes(self.edges)) - 1
 
         if self.networkx_graph:
             paths = networkx.all_simple_paths(self.networkx_graph, source_node, destination_node)
@@ -130,9 +133,7 @@ class Graph:
                  3  [0, 0, 0]]
         """
         # initialize matrix to nxn 0 matrix
-        nodes = Graph.get_nodes(self.edges)
-        num_nodes = len(nodes)
-        self.connection_matrix = numpy.zeros((num_nodes, num_nodes))
+        self.connection_matrix = Graph._gen_zero_n_square_matrix(self.edges)
 
         for edge in self.edges:
             self.connection_matrix[edge[0] - 1][edge[1] - 1] = 1
@@ -155,4 +156,19 @@ class Graph:
                 if node not in nodes:
                     nodes.append(node)
         return nodes
+
+    # Static/Class Function
+    def _gen_zero_n_square_matrix(edges: Sequence) -> numpy.ndarray:
+        """
+        Generates an nxn zero square matrix based on the list of edges
+
+        Args:
+            edges (Sequence): list of edges in the graph (node pairs)
+
+        Returns:
+            numpy.ndarray: an nxn zero square matrix
+        """
+        nodes = Graph.get_nodes(edges)
+        num_nodes = len(nodes)
+        return numpy.zeros((num_nodes, num_nodes))
 
