@@ -9,6 +9,7 @@ def main():
     G.add_nodes_from([1,2])
     color_map = ["green","red"]
     nx.draw_networkx(G,pos=nx.circular_layout(G),node_color=color_map)
+    paths = G.all_simple_paths()
     plt.show()
     
 

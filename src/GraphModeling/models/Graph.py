@@ -70,6 +70,7 @@ class Graph:
         Returns:
             Sequence: a list of paths (a path is an array of nodes)
         """
+        #TODO: Returns a generator object instead of an array
         paths = []
 
         if not destination_node:
