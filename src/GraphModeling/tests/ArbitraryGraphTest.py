@@ -11,7 +11,7 @@ import networkx
 def main():
     for i in range(1,11):
         graph = get_arbitrary_graph(5)
-        graph.print_graph(picture_name = "arb5graph_"+str(i),suppress_text_output=True)
+        graph.print_graph(picture_name = f"resources/ArbitraryGraphTestResults/arb5graph_{i}", suppress_text_output=True)
     
 
 def get_arbitrary_graph(n: int) -> Graph:
