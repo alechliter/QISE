@@ -1,4 +1,6 @@
-from collections.abc import Sequence, Mapping
+
+from typing import Dict, List, Tuple
+
 
 class NodeLabel:
     """
@@ -6,22 +8,22 @@ class NodeLabel:
         
     members:
         + node_index (int): the index identifier of the node
-        + labels (Mapping): a dictionary of node indicies to labels, of the form:
+        + labels (Dict[int, Tuple(int, int)]): a dictionary of node indicies to labels, of the form:
             L_i = { j : (W_jk + w_ji, C_jk + c_ji) }
         + incoming_nodes (Sequence): a list of indicies of nodes with outgoing edges to this node.
     """
 
-    def __init__(self, index: int, incoming_nodes: Sequence = []) -> None:
+    def __init__(self, index: int, incoming_nodes: List[int] = []) -> None:
         """
         Creates a new instance of a NodeLabel object.
 
         Args:
             index (int): the index identifier of the node
-            incoming_nodes (Sequence, optional): the list of nodes with outgoing edges going to the node. Defaults to [].
+            incoming_nodes (List[int], optional): the list of nodes with outgoing edges going to the node. Defaults to [].
         """
         self.node_index = index
         self.incoming_nodes = incoming_nodes
-        self.labels: Mapping = { node: [] for node in incoming_nodes }
+        self.labels: Dict[int, Tuple[int, int]] = { node: [] for node in incoming_nodes }
 
     def add_label(self, weight: int, cost: int, index: int) -> None:
         """
@@ -53,13 +55,13 @@ class NodeLabel:
 
         return NodeLabel._is_label_dominated_in_list(weight, cost, self.labels.value())
 
-    def get_efficient_labels(self) -> Mapping:
+    def get_efficient_labels(self) -> Dict[int, Tuple[int, int]]:
         """
         Returns a list of all the efficient labels for the node. An efficient label is a label
         that is not dominated by any other label for the node.
 
         Returns:
-            Mapping: a dictionary of the nodes to their label, only returning efficient labels
+            Dict[int, Tuple[int, int]]: a dictionary of the nodes to their label, only returning efficient labels
         """
         efficient_labels = {}
         
@@ -71,7 +73,7 @@ class NodeLabel:
         return efficient_labels
     
     @staticmethod
-    def _is_label_dominated_in_list(weight: int, cost: int, labels: Sequence) -> bool:
+    def _is_label_dominated_in_list(weight: int, cost: int, labels: List[Tuple[int, int]]) -> bool:
         """
         Checks if a label is dominated based on the weight and cost. A label is dominated if
         its weight and cost are both less than the weight and cost of another node in the set

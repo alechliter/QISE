@@ -1,8 +1,8 @@
+from typing import Dict, List, Tuple
 import matplotlib.pyplot as pyplot
 import networkx
 import numpy
 
-from collections.abc import Sequence, Mapping
 from numpy import random as r
 
 class Graph:
@@ -10,12 +10,12 @@ class Graph:
     The Graph class allows for the generation of directed graphs containing weights and costs.
 
     members:
-        + edges (Sequence): a list of (from, to) node tuples
+        + edges (List[int]): a list of (from, to) node tuples
         + direction_matrix (numpy.ndarray): matrix of the directed edges between nodes
         + networkx_graph (networkx.DiGraph): networkx object representation of graph
     """
     
-    def __init__(self, edges: Sequence) -> None:
+    def __init__(self, edges: List[int]) -> None:
         """
         Creates a new instance of the Graph class. Initializes the graph's 
         matricies based on the given general matrix.  
@@ -23,7 +23,7 @@ class Graph:
         Args:
             edges (Sequence): a list of edges (node from-to tuples)
         """
-        self.edges: Sequence = edges
+        self.edges: List[int] = edges
         self.connection_matrix: numpy.ndarray
         self.networkx_graph: networkx.DiGraph
 
@@ -34,13 +34,13 @@ class Graph:
         self._initialize_networkx_graph()
 
         
-    def print_graph(self, picture_name: str = "", edge_labels: Mapping | None = None, suppress_text_output: bool = False) -> None:
+    def print_graph(self, picture_name: str = "", edge_labels: Dict[Tuple[int, int], str] | None = None, suppress_text_output: bool = False) -> None:
         """
         Prints the graph using the networkx graph representation and pyplot.
 
         Args:
             picture_name (str, optional): The name to save the graph image as. Defaults to "".
-            edge_labels (Mapping | None, optional): The dictionary of edges to labels. Defaults to None.
+            edge_labels (Dict[Tuple[int, int], str] | None, optional): The dictionary of edges to labels. Defaults to None.
             suppress_text_output (bool): Supresses print statements and edge labels from being printed on the graph. Defaults to False
         """
         if(not suppress_text_output):
@@ -62,7 +62,7 @@ class Graph:
             pyplot.savefig(picture_name) #save as png
         pyplot.show() #display
 
-    def get_simple_paths(self, source_node: int = 0, destination_node: int | None = None) -> Sequence:
+    def get_simple_paths(self, source_node: int = 0, destination_node: int | None = None) -> List[int]:
         """
         Returns an array of simple paths in the graph
 
@@ -71,7 +71,7 @@ class Graph:
             destination_node(int): the last node in the path
 
         Returns:
-            Sequence: a list of paths (a path is an array of nodes)
+            List[ints]: a list of paths (a path is an array of nodes)
         """
         #TODO: Returns a generator object instead of an array
         paths = []
@@ -84,7 +84,7 @@ class Graph:
 
         return paths
     
-    def get_color_map(self, n: int, s: int = 0, t: int = -1) -> Sequence:
+    def get_color_map(self, n: int, s: int = 0, t: int = -1) -> List[str]:
         """
         Returns a colop mapping for each node in the graph
 
@@ -94,7 +94,7 @@ class Graph:
             t (int, optional): The destination node. Defaults to -1.
 
         Returns:
-            Sequence: a color mapping of each node in the graph
+            List[str]: a color mapping of each node in the graph
         """
         if t == -1:
             t = n - 1
@@ -110,7 +110,7 @@ class Graph:
                 color_map.append("blue")    
         return color_map
     
-    def get_incoming_nodes(self, node: int) -> Sequence:
+    def get_incoming_nodes(self, node: int) -> List[int]:
         """
         Returns a list of all the nodes directly connected to the given node
         by an incoming edge to the given node.
@@ -119,7 +119,7 @@ class Graph:
             node (int): the node that is a destination of the incoming edges
 
         Returns:
-            Sequence: a list of nodes (integer identifiers)
+            List[int]: a list of nodes (integer identifiers)
         """
         incoming_nodes = []
         # the list of incoming nodes is the corresponding column in the connections matrix
@@ -130,7 +130,7 @@ class Graph:
                 incoming_nodes.append(i)
         return incoming_nodes
 
-    def get_outgoing_nodes(self, node: int) -> Sequence:
+    def get_outgoing_nodes(self, node: int) -> List[int]:
         """
         Returns a list of all the nodes directly connected to the given node
         by an outgoing edge from the given node.
@@ -139,7 +139,7 @@ class Graph:
             node (int): the node that is a source of the outgoing edges
 
         Returns:
-            Sequence: a list of nodes (integer identifiers)
+            List[int]: a list of nodes (integer identifiers)
         """
         outgoing_nodes = []
         # the list of outoing nodes is the corresponding row in the connections matrix
@@ -186,7 +186,7 @@ class Graph:
             self.connection_matrix[edge[0] - 1][edge[1] - 1] = 1
 
     # Static/Class Function
-    def get_nodes(edges: Sequence) -> Sequence:
+    def get_nodes(edges: List[Tuple[int, int]]) -> List[int]:
         """
         Returns a list of nodes given a list of edges
 
@@ -194,7 +194,7 @@ class Graph:
             edges (Sequence): a list of edges, where an edge is a tuple of nodes
 
         Returns:
-            [Sequence]: a list of nodes in the graph with edges
+            [List[Tuple[int, int]]]: a list of nodes in the graph with edges
         """
         nodes = []
 
@@ -207,12 +207,12 @@ class Graph:
         return nodes
 
     # Static/Class Function
-    def _gen_zero_n_square_matrix(edges: Sequence) -> numpy.ndarray:
+    def _gen_zero_n_square_matrix(edges: List[Tuple[int, int]]) -> numpy.ndarray:
         """
         Generates an nxn zero square matrix based on the list of edges
 
         Args:
-            edges (Sequence): list of edges in the graph (node pairs)
+            edges (List[Tuple[int, int]]): list of edges in the graph (node pairs)
 
         Returns:
             numpy.ndarray: an nxn zero square matrix
