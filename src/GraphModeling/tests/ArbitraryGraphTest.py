@@ -10,7 +10,7 @@ import networkx
 
 def main():
     for i in range(1,11):
-        graph = get_arbitrary_graph(5)
+        graph = Graph.get_arbitrary_graph(5)
         print(f"Paths of the graph {i}")
         print_paths(graph.get_simple_paths())
         print(f"Nodes in the graph: {Graph.get_nodes(graph.edges)}")
@@ -36,7 +36,7 @@ def get_arbitrary_graph(n: int) -> Graph:
         delta_o = r.choice([*range(i+1,n)], N_oe, replace=False) if i!=n-1 else [n]
         #For each j in delta_o[], add edge (i,j)
         for j in delta_o:
-            #TODO: Add weights and cost generation
+            #TODO: Add weights and cost generation -> can only do to a WCGraph
             graphDict[i,j] = (0,0)
         #If no incoming nodes
         oneInNode = False

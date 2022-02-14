@@ -3,6 +3,7 @@ import networkx
 import numpy
 
 from collections.abc import Sequence, Mapping
+from numpy import random as r
 
 class Graph:
     """ 
@@ -179,4 +180,41 @@ class Graph:
         nodes = Graph.get_nodes(edges)
         num_nodes = len(nodes)
         return numpy.zeros((num_nodes, num_nodes))
+
+    def get_arbitrary_graph(n: int):
+        """Generates arbitrary WC graph with n nodes and no weights or costs
+
+        Args:
+            n (int): number of nodes
+
+        Returns:
+            Graph: arbitary WC graph with all (w,c) = (0,0)
+        """
+        graphDict = {}
+        #Loop i range(0,n)
+        for i in range(0,n-1):
+            #Random Noe range(i,n) # of outgoing edges
+            N_oe = r.randint(1,n-i) if n-i>1 else 1
+            #print("i :", i, "\tN_oe: ", N_oe)
+            #Choose Noe unique nodes range(1,n) delta_o[]
+            delta_o = r.choice([*range(i+1,n)], N_oe, replace=False) if i!=n-1 else [n]
+            #For each j in delta_o[], add edge (i,j)
+            for j in delta_o:
+                #TODO: Add weights and cost generation -> can only do to a WCGraph
+                graphDict[i,j] = (0,0)
+            #If no incoming nodes
+            oneInNode = False
+            for k in range(0,i):
+                if((k,i) in graphDict):
+                    oneInNode = True
+                    break
+            if not oneInNode and i != 0:
+                #Choose node incoming n_in range(0,i-1)
+                n_in = r.randint(0,i-1) if i>1 else 0
+                #Add edge (n_in,i)
+                #TODO: Add weight and const
+                graphDict[n_in,i] = (0,0)
+            
+        graph = Graph(graphDict)
+        return graph
 
