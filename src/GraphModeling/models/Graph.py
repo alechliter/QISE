@@ -33,26 +33,31 @@ class Graph:
         self._initialize_networkx_graph()
 
         
-    def print_graph(self, picture_name: str = "", edge_labels: Mapping | None = None) -> None:
+    def print_graph(self, picture_name: str = "", edge_labels: Mapping | None = None, suppress_text_output: bool = False) -> None:
         """
         Prints the graph using the networkx graph representation and pyplot.
 
         Args:
             picture_name (str, optional): The name to save the graph image as. Defaults to "".
             edge_labels (Mapping | None, optional): The dictionary of edges to labels. Defaults to None.
+            suppress_text_output: Supresses print statements and edge labels from being printed on the graph
         """
-        print("Nodes on Graph:")
-        print(f"|    {self.networkx_graph.nodes()}")
-        print("Edges of Graph:")
-        print(f"|    {self.networkx_graph.edges()}")
-
+        if(not suppress_text_output):
+            print("Nodes on Graph:")
+            print(f"|    {self.networkx_graph.nodes()}")
+            print("Edges of Graph:")
+            print(f"|    {self.networkx_graph.edges()}")
+        
+        #TODO: Fix positioning bug - nodes should be in counterclockwise order (should also fix color map bug)
+        #TODO: Alter size of nodes and lines with size of graph
         networkx.draw_networkx(self.networkx_graph, 
             pos = networkx.circular_layout(self.networkx_graph), node_color = self.get_color_map(len(self.networkx_graph)))
         
-        if edge_labels:
+        if edge_labels and not suppress_text_output:
             networkx.draw_networkx_edge_labels(self.networkx_graph, edge_labels = edge_labels, pos = networkx.circular_layout(self.networkx_graph))
 
         if picture_name != "":
+            #TODO: Add a parameter to save this in the folder the .py file running the program is in or choice of location
             pyplot.savefig(picture_name) #save as png
         pyplot.show() #display
 
@@ -67,6 +72,7 @@ class Graph:
         Returns:
             Sequence: a list of paths (a path is an array of nodes)
         """
+        #TODO: Returns a generator object instead of an array
         paths = []
 
         if not destination_node:

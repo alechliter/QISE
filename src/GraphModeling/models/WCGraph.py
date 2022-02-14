@@ -95,19 +95,20 @@ class WCGraph(Graph):
 
         return (total_weight, total_cost)
 
-    def print_graph(self, picture_name: str = "") -> None:
+    def print_graph(self, picture_name: str = "", suppress_text_output: bool = False) -> None:
         """
         Prints the graph with (weight, cost) labels for each edge
 
         Args:
             picture_name (str, optional): The name of the file to save the picture to. Defaults to "".
+            suppress_text_output: Supresses print statements and edge labels from being printed on the graph
         """
         edge_labels = {}
 
         for edge, constraints in self.wc_edges.items():
             edge_labels[edge] = f"{constraints[0]}, {constraints[1]}"
 
-        super(WCGraph, self).print_graph(picture_name, edge_labels)
+        super(WCGraph, self).print_graph(picture_name, edge_labels, suppress_text_output)
 
     def _generate_weight_cost_matricies(self):
         """
