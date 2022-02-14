@@ -70,6 +70,7 @@ class NodeLabel:
 
         return efficient_labels
     
+    @staticmethod
     def _is_label_dominated_in_list(weight: int, cost: int, labels: Sequence) -> bool:
         """
         Checks if a label is dominated based on the weight and cost. A label is dominated if

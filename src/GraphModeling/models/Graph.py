@@ -110,6 +110,46 @@ class Graph:
                 color_map.append("blue")    
         return color_map
     
+    def get_incoming_nodes(self, node: int) -> Sequence:
+        """
+        Returns a list of all the nodes directly connected to the given node
+        by an incoming edge to the given node.
+
+        Args:
+            node (int): the node that is a destination of the incoming edges
+
+        Returns:
+            Sequence: a list of nodes (integer identifiers)
+        """
+        incoming_nodes = []
+        # the list of incoming nodes is the corresponding column in the connections matrix
+        matrix_column = self.graph.connection_matrix[:, node]
+        # add every node with an outgoing edge to the current node
+        for i in range(len(matrix_column)):
+            if matrix_column[i] != 0:
+                incoming_nodes.append(i)
+        return incoming_nodes
+
+    def get_outgoing_nodes(self, node: int) -> Sequence:
+        """
+        Returns a list of all the nodes directly connected to the given node
+        by an outgoing edge from the given node.
+
+        Args:
+            node (int): the node that is a source of the outgoing edges
+
+        Returns:
+            Sequence: a list of nodes (integer identifiers)
+        """
+        outgoing_nodes = []
+        # the list of outoing nodes is the corresponding row in the connections matrix
+        matrix_row = self.graph.connection_matrix[node, :]
+        # add every node with an incoming edge from the current node
+        for i in range(len(matrix_row)):
+            if matrix_row[i] != 0:
+                outgoing_nodes.append(i)
+        return outgoing_nodes
+    
     def _initialize_networkx_graph(self) -> None:
         """
         Initializes the networkx graph, adding the nodes and edges of the graph 
