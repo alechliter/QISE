@@ -11,6 +11,9 @@ import networkx
 def main():
     for i in range(1,11):
         graph = get_arbitrary_graph(5)
+        print(f"Paths of the graph {i}")
+        print_paths(graph.get_simple_paths())
+        print(f"Nodes in the graph: {Graph.get_nodes(graph.edges)}")
         graph.print_graph(picture_name = f"resources/ArbitraryGraphTestResults/arb5graph_{i}", suppress_text_output=True)
     
 

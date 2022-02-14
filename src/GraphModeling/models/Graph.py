@@ -40,7 +40,7 @@ class Graph:
         Args:
             picture_name (str, optional): The name to save the graph image as. Defaults to "".
             edge_labels (Mapping | None, optional): The dictionary of edges to labels. Defaults to None.
-            suppress_text_output: Supresses print statements and edge labels from being printed on the graph
+            suppress_text_output (bool): Supresses print statements and edge labels from being printed on the graph. Defaults to False
         """
         if(not suppress_text_output):
             print("Nodes on Graph:")
@@ -161,6 +161,8 @@ class Graph:
             for node in edge:
                 if node not in nodes:
                     nodes.append(node)
+        # sort the nodes
+        nodes.sort()
         return nodes
 
     # Static/Class Function
