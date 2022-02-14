@@ -21,7 +21,7 @@ def get_arbitrary_graph(n: int) -> Graph:
         n (int): number of nodes
 
     Returns:
-        Graph: arbitary WC graph
+        Graph: arbitary WC graph with all (w,c) = (0,0)
     """
     graphDict = {}
     #Loop i range(0,n)
