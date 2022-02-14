@@ -1,5 +1,6 @@
 from ctypes import sizeof
 import numpy
+from numpy import random as r
 
 from collections.abc import Sequence
 
@@ -8,24 +9,47 @@ from ..models.Graph import Graph
 import networkx
 
 def main():
-    # graphDict = get_maximal_graph(5)
-    # # print(graphDict)
-    # graph = WCGraph(graphDict)
-    # graph.print_graph(suppress_text_output=True)
+    for i in range(1,11):
+        graph = get_arbitrary_graph(5)
+        graph.print_graph(picture_name = "arb5graph_"+str(i),suppress_text_output=True)
     
-    graphDict2 = arbitrary_graph(5)
-    print(graphDict2)
-    
-    # G = networkx.DiGraph()
-    # G.add_edges_from(graphDict2)
-    
-    graph2 = Graph(graphDict2)
-    
-    paths = graph2.get_simple_paths()
-    print(paths)
-    
-    graph2.print_graph(suppress_text_output=True)
 
+def get_arbitrary_graph(n: int) -> Graph:
+    """Generates arbitrary WC graph with n nodes and no weights or costs
+
+    Args:
+        n (int): number of nodes
+
+    Returns:
+        Graph: arbitary WC graph
+    """
+    graphDict = {}
+    #Loop i range(0,n)
+    for i in range(0,n-1):
+        #Random Noe range(i,n) # of outgoing edges
+        N_oe = r.randint(1,n-i) if n-i>1 else 1
+        #print("i :", i, "\tN_oe: ", N_oe)
+        #Choose Noe unique nodes range(1,n) delta_o[]
+        delta_o = r.choice([*range(i+1,n)], N_oe, replace=False) if i!=n-1 else [n]
+        #For each j in delta_o[], add edge (i,j)
+        for j in delta_o:
+            #TODO: Add weights and cost generation
+            graphDict[i,j] = (0,0)
+        #If no incoming nodes
+        oneInNode = False
+        for k in range(0,i):
+            if((k,i) in graphDict):
+                oneInNode = True
+                break
+        if not oneInNode and i != 0:
+            #Choose node incoming n_in range(0,i-1)
+            n_in = r.randint(0,i-1) if i>1 else 0
+            #Add edge (n_in,i)
+            #TODO: Add weight and const
+            graphDict[n_in,i] = (0,0)
+        
+    graph = Graph(graphDict)
+    return graph
 
 def get_maximal_graph(n: int) -> dict:
     """Returns a maximal (all paths from s to t) graph
