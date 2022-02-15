@@ -62,7 +62,7 @@ class Graph:
             pyplot.savefig(picture_name) #save as png
         pyplot.show() #display
 
-    def get_simple_paths(self, source_node: int = 0, destination_node: int | None = None) -> List[int]:
+    def get_simple_paths(self, source_node: int = 0, destination_node: int | None = None) -> List[List[int]]:
         """
         Returns an array of simple paths in the graph
 
@@ -71,7 +71,7 @@ class Graph:
             destination_node(int): the last node in the path
 
         Returns:
-            List[ints]: a list of paths (a path is an array of nodes)
+            List[List[int]]: a list of paths (a path is an array of nodes)
         """
         #TODO: Returns a generator object instead of an array
         paths = []
@@ -123,7 +123,7 @@ class Graph:
         """
         incoming_nodes = []
         # the list of incoming nodes is the corresponding column in the connections matrix
-        matrix_column = self.graph.connection_matrix[:, node]
+        matrix_column = self.connection_matrix[:, node]
         # add every node with an outgoing edge to the current node
         for i in range(len(matrix_column)):
             if matrix_column[i] != 0:
@@ -143,7 +143,7 @@ class Graph:
         """
         outgoing_nodes = []
         # the list of outoing nodes is the corresponding row in the connections matrix
-        matrix_row = self.graph.connection_matrix[node, :]
+        matrix_row = self.connection_matrix[node, :]
         # add every node with an incoming edge from the current node
         for i in range(len(matrix_row)):
             if matrix_row[i] != 0:
@@ -173,17 +173,17 @@ class Graph:
         + The column of the martix represents the "from" nodes and the row represents the "to" nodes, 
         so you can represent directed graphs using the matrix.
 
-            3x3 Example: list of edges --> [(1, 2), (1, 3)]
-                     1  2  3
-                 1 [[0, 1, 1],
-                 2  [0, 0, 0], 
-                 3  [0, 0, 0]]
+            3x3 Example: list of edges --> [(0, 1), (0, 2)]
+                     0  1  2
+                 0 [[0, 1, 1],
+                 1  [0, 0, 0], 
+                 2  [0, 0, 0]]
         """
         # initialize matrix to nxn 0 matrix
         self.connection_matrix = Graph._gen_zero_n_square_matrix(self.edges)
 
         for edge in self.edges:
-            self.connection_matrix[edge[0] - 1][edge[1] - 1] = 1
+            self.connection_matrix[edge[0]][edge[1]] = 1
 
     # Static/Class Function
     def get_nodes(edges: List[Tuple[int, int]]) -> List[int]:
