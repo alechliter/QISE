@@ -21,18 +21,21 @@ class LabelAlgorithm:
         self.node_labels: Dict[int, NodeLabel] = {}
         self.graph: WCGraph = None
         self.source_node: int = None
+        self.max_weight: int = None
     
-    def run_algorithm(self, graph: WCGraph, source_node: int):
+    def run_algorithm(self, graph: WCGraph, source_node: int, max_weight: int):
         """
         Runs the Label Setting Algorithm on the given weight-constrained graph with the given source node.
 
         Args:
             graph (WCGraph): the weight-constrained graph
             source_node (int): the index that defines the source node
+            max_weight (itn): the maximum weight constraint
         """
         # TODO: finish
         self.graph = graph
         self.source_node = source_node
+        self.max_weight = max_weight 
 
         # Step 0: Initialize the labels
         self._initialize_label_setup()
@@ -49,14 +52,24 @@ class LabelAlgorithm:
                 untreated_in_nodes = current_node.get_untreated_nodes()
                 k_in = None
                 for j_in in untreated_in_nodes:
-                    if not k_in:
-                        W_k_i = self.graph.edges[k_in, i][0] # the weight of edge (k, i)
-                        W_j_i = self.graph.edges[j_in, i][0] # the weight of edge (j, i)
+                    if k_in is not None:
+                        W_k_i = self.graph.edges[k_in, i][0]    # the weight of edge (k, i)
+                        W_j_i = self.graph.edges[j_in, i][0]    # the weight of edge (j, i)
                         if W_j_i < W_k_i:
                             k_in = j_in
                     else:
                         k_in = j_in
-                # TODO: Step 2: Treat the label
+                # Step 2: Treat the label
+                W_k_i = self.graph.edges[k_in, i][0]            # the weight of edge (k, i)
+                for j_out in current_node.outgoing_nodes:
+                    w_i_j = self.graph.edges[i, j_out][0]       # the weight of edge (i, j)
+                    if W_k_i + w_i_j <= self.max_weight:
+                        C_k_i = self.graph.edges[k_in, i][1]    # cost of the edge (k, i)
+                        c_i_j = self.graph.edges[i, j_out][1]   # cost of the edge (i, j)
+                        if not current_node.is_label_dominated(W_k_i + w_i_j, C_k_i + c_i_j):
+                            current_node.add_label(W_k_i + w_i_j, C_k_i + c_i_j)
+                current_node.treated_nodes.append(k_in)
+
             else:
                 print("Error: untreated nodes remain yet no next node found")
                 break
@@ -83,7 +96,7 @@ class LabelAlgorithm:
         Returns:
             Set[int]: a set of all indicies that have not yet been treated.
         """
-        remaining_labels: Set[int] = {}
+        remaining_labels: Set[int] = set()
 
         for node, node_label in self.node_labels.items():
             if node != self.source_node:
