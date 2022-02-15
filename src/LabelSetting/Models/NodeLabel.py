@@ -1,5 +1,5 @@
 
-from typing import Dict, List, Tuple
+from typing import Dict, List, Set, Tuple
 
 
 class NodeLabel:
@@ -10,10 +10,12 @@ class NodeLabel:
         + node_index (int): the index identifier of the node
         + labels (Dict[int, Tuple(int, int)]): a dictionary of node indicies to labels, of the form:
             L_i = { j : (W_jk + w_ji, C_jk + c_ji) }
-        + incoming_nodes (Sequence): a list of indicies of nodes with outgoing edges to this node.
+        + incoming_nodes (List[int]): a list of indicies of nodes with outgoing edges to this node.
+        + outgoing_nodes (List[int]): a list of indicices of nodes with incoming edges from this node.
+        + treated_nodes (List[int]): a list of treated nodes for the label (only treats outgoing labels)
     """
 
-    def __init__(self, index: int, incoming_nodes: List[int] = []) -> None:
+    def __init__(self, index: int, incoming_nodes: List[int] = [], outgoing_nodes: List[int] = []) -> None:
         """
         Creates a new instance of a NodeLabel object.
 
@@ -23,6 +25,8 @@ class NodeLabel:
         """
         self.node_index = index
         self.incoming_nodes = incoming_nodes
+        self.outgoing_nodes = outgoing_nodes
+        self.treated_nodes: List[int] = []
         self.labels: Dict[int, Tuple[int, int]] = { node: [] for node in incoming_nodes }
 
     def add_label(self, weight: int, cost: int, index: int) -> None:
@@ -71,6 +75,20 @@ class NodeLabel:
                 efficient_labels[node] = label
 
         return efficient_labels
+    
+    def get_untreated_nodes(self) -> Set[int]:
+        """
+        Returns a set of the remaining indicies not yet treated for a node: I_i - T_i
+
+        Args:
+            node (int): the node identifier
+
+        Returns:
+            Set[int]: returns a set of node indicies that have not yet been treated for that node
+        """
+        set_of_indicies = set(self.incoming_nodes)
+        set_of_treated = set(self.treated_nodes)
+        return set_of_indicies.difference(set_of_treated)
     
     @staticmethod
     def _is_label_dominated_in_list(weight: int, cost: int, labels: List[Tuple[int, int]]) -> bool:
