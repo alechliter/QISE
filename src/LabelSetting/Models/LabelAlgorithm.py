@@ -44,8 +44,8 @@ class LabelAlgorithm:
         untreated_indicies = self._get_remaining_label_indicies()
         while len(untreated_indicies) != 0:
             current_node = self._get_next_node()
-            i = current_node.node_index
             if current_node:
+                i = current_node.node_index
                 # Step 1b: select an untreated index of the node such that the total weight is minimal
                 #   meaning: given node i, select node index k from the list of untreated incoming nodes to i such 
                 #            that the weight of the edge (k, i) is the smallest among incoming edges to i
@@ -53,21 +53,22 @@ class LabelAlgorithm:
                 k_in = None
                 for j_in in untreated_in_nodes:
                     if k_in is not None:
-                        W_k_i = self.graph.edges[k_in, i][0]    # the weight of edge (k, i)
-                        W_j_i = self.graph.edges[j_in, i][0]    # the weight of edge (j, i)
+                        W_k_i = self.graph.wc_edges[k_in, i][0]    # the weight of edge (k, i)
+                        W_j_i = self.graph.wc_edges[j_in, i][0]    # the weight of edge (j, i)
                         if W_j_i < W_k_i:
                             k_in = j_in
                     else:
                         k_in = j_in
                 # Step 2: Treat the label
-                W_k_i = self.graph.edges[k_in, i][0]            # the weight of edge (k, i)
+                W_k_i = self.graph.wc_edges[k_in, i][0]            # the weight of edge (k, i)
                 for j_out in current_node.outgoing_nodes:
-                    w_i_j = self.graph.edges[i, j_out][0]       # the weight of edge (i, j)
+                    w_i_j = self.graph.wc_edges[i, j_out][0]       # the weight of edge (i, j)
                     if W_k_i + w_i_j <= self.max_weight:
-                        C_k_i = self.graph.edges[k_in, i][1]    # cost of the edge (k, i)
-                        c_i_j = self.graph.edges[i, j_out][1]   # cost of the edge (i, j)
+                        C_k_i = self.graph.wc_edges[k_in, i][1]    # cost of the edge (k, i)
+                        c_i_j = self.graph.wc_edges[i, j_out][1]   # cost of the edge (i, j)
                         if not current_node.is_label_dominated(W_k_i + w_i_j, C_k_i + c_i_j):
-                            current_node.add_label(W_k_i + w_i_j, C_k_i + c_i_j)
+                            # add the label to the next node: j
+                            self.node_labels[j_out].add_label(W_k_i + w_i_j, C_k_i + c_i_j, current_node.node_index)
                 current_node.treated_nodes.append(k_in)
 
             else:
@@ -100,8 +101,8 @@ class LabelAlgorithm:
 
         for node, node_label in self.node_labels.items():
             if node != self.source_node:
-                remaining_labels.union(node_label.get_untreated_nodes())
-
+                # union of the remaining labels with the current node's untreated labels
+                remaining_labels.update(node_label.get_untreated_nodes())
         return remaining_labels
     
     def _get_next_node(self) -> NodeLabel | None:
@@ -114,7 +115,7 @@ class LabelAlgorithm:
         next_node: NodeLabel | None = None
 
         for node in self.node_labels.values():
-            if node.node_index != self.source_node and len(node.get_untreated_nodes) != 0:
+            if node.node_index != self.source_node and len(node.get_untreated_nodes()) != 0:
                 next_node = node
                 break
 

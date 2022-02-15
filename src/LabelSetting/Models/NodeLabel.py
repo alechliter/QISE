@@ -92,7 +92,7 @@ class NodeLabel:
             bool: true if the label is dominated by at least one label in this node
         """
 
-        return NodeLabel._is_label_dominated_in_list(weight, cost, self.labels.value())
+        return NodeLabel._is_label_dominated_in_list(weight, cost, self.labels.values())
 
     def get_efficient_labels(self) -> Dict[int, Tuple[int, int]]:
         """
@@ -143,7 +143,7 @@ class NodeLabel:
         isDominated = False
 
         for label in labels:
-            if (weight > label[0] and cost > label[1]) or label == (weight, cost):
+            if len(label) != 0 and (weight > label[0] and cost > label[1]) or label == (weight, cost):
                 isDominated = True
                 break
 
