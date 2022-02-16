@@ -69,27 +69,6 @@ class NodeLabel:
                 minimal_node = node
 
         return (minimal_node, minimal_label)
-    
-    def get_lowest_weight_untreated_label(self) -> Tuple[int,  Tuple[int, int]] | None:
-        """
-        Finds the untreated label with the lowest weight for this node
-
-        Returns:
-            Tuple[int,  Tuple[int, int]] | None: the node and corresponding label with the lowest weight, None if there are no labels
-        """
-        minimal_label: Tuple[int, int] | None = None
-        minimal_node: int = None
-
-        for node, label in self.labels.items():
-            if node not in self.treated_nodes:
-                if minimal_label is not None and len(label) != 0:
-                    if label[0] < minimal_label[0] or (label[0] == minimal_label[0] and label[1] < minimal_label[1]):
-                        minimal_label = label
-                        minimal_node = node
-                elif len(label) != 0:
-                    minimal_label = label
-                    minimal_node = node
-        return (minimal_node, minimal_label)
 
     def is_label_dominated(self, weight: int, cost: int) -> bool:
         """
