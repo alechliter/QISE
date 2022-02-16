@@ -102,34 +102,37 @@ class LabelAlgorithm:
 
             # Step 1b: select an untreated index of the node such that the total weight is minimal
             #   meaning: given node i, select node index k from the list of untreated incoming nodes to i such 
-            #        
+            #            that the weight of the edge (k, i) is the smallest among incoming edges to i
             current_node: NodeLabel = self._rec_next_node(self.source_node)
             if current_node is not None:
+                i = current_node.node_index
                 k_in: int = None
                 k_label: Tuple[int, int] = None
+                W_k_i:int
+                C_k_i:int
                 if current_node.node_index != self.source_node:
                     # find the incoming node with a label with the lowest weight
+                    # node_label = current_node.get_lowest_weight_untreated_label()
+                    # k_in = node_label[0]
+                    # k_label = node_label[1]
 
-                    node_label = current_node.get_lowest_weight_label()
-                    k_in = node_label[0]
-                    k_label = node_label[1]
-
-                    # for j_in in current_node.incoming_nodes:
-                    #     if k_in is not None:
-                    #         j_label = self.node_labels[j_in].get_lowest_weight_label()
-                    #         if j_label[0] < k_label[0] or (j_label[0] == k_label[0] and j_label[1] < k_label[1]):
-                    #             k_label = j_label
-                    #     else:
-                    #         k_in = j_in
-                    #         k_label = self.node_labels[k_in].get_lowest_weight_label()
+                    for j_in in current_node.get_untreated_nodes():
+                        if k_in is not None:
+                            j_label = self.node_labels[j_in].get_lowest_weight_label()[1]
+                            if j_label[0] < k_label[0] or (j_label[0] == k_label[0] and j_label[1] < k_label[1]):
+                                k_label = j_label
+                        else:
+                            k_in = j_in
+                            k_label = self.node_labels[k_in].get_lowest_weight_label()[1]
+                    W_k_i = k_label[0] + self.graph.wc_edges[k_in, i][0]    # the weight of the path [s, ..., k, i]
+                    C_k_i = k_label[1] + self.graph.wc_edges[k_in, i][1]    # the cost of the path [s, ..., k, i]
                 else:
                     k_in = current_node.node_index
                     k_label = current_node.labels[0]
+                    W_k_i = k_label[0]
+                    C_k_i = k_label[1]
 
                 # Step 2: Treat the label
-                W_k_i:int = k_label[0]  # the weight of the path [s, ..., k, i]
-                C_k_i:int = k_label[1]  # the cost of the path [s, ..., k, i]
-                i = current_node.node_index
                 for j_out in current_node.outgoing_nodes:
                     w_i_j = self.graph.wc_edges[i, j_out][0]       # the weight of edge (i, j)
                     total_weight = W_k_i + w_i_j
@@ -137,11 +140,16 @@ class LabelAlgorithm:
                         c_i_j = self.graph.wc_edges[i, j_out][1]   # cost of the edge (i, j)
                         total_cost = C_k_i + c_i_j
                         if not self.node_labels[j_out].is_label_dominated(total_weight, total_cost):
-                            # add the label to the next node (j) and reset that node's treated_nodes
+                            # add the label to the next node (j) and remove that node from treated lists
                             self.node_labels[j_out].add_label(total_weight, total_cost, current_node.node_index)
-                            self.node_labels[j_out].treated_nodes = []
+                            for node in self.node_labels[j_out].outgoing_nodes:
+                                if j_out in self.node_labels[node].treated_nodes:
+                                    self.node_labels[node].treated_nodes.remove(j_out)
+                            # self.node_labels[j_out].treated_nodes = []
+                            # self.node_labels[j_out].needs_visit = True
 
                 current_node.treated_nodes.append(k_in)
+                current_node.needs_visit = False
             else:
                 print("Error: untreated nodes remain yet no next node found")
                 break
@@ -206,7 +214,9 @@ class LabelAlgorithm:
         # (found_node is a leaf - a node with no outgoing nodes)
         next_node: NodeLabel | None = None
 
-        if len(self.node_labels[from_node].treated_nodes) == 0:
+        # if len(self.node_labels[from_node].treated_nodes) == 0:
+        # if self.node_labels[from_node].needs_visit:
+        if self.node_labels[from_node].num_untreated_nodes() > 0:
             # case 2: from_node has untreated nodes
             next_node = self.node_labels[from_node]
         else:
@@ -217,7 +227,9 @@ class LabelAlgorithm:
                 untreated_children = []
                 for child in child_nodes:
                     child_node = self.node_labels[child]
-                    if len(child_node.treated_nodes) == 0:
+                    # if len(child_node.treated_nodes) == 0:
+                    # if child_node.needs_visit:
+                    if child_node.num_untreated_nodes() > 0:
                         untreated_children.append(child_node)
                 if len(untreated_children) > 0:
                     next_node = untreated_children.pop()
