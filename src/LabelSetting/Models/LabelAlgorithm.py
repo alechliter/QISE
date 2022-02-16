@@ -32,7 +32,6 @@ class LabelAlgorithm:
             source_node (int): the index that defines the source node
             max_weight (itn): the maximum weight constraint
         """
-        # TODO: finish
         self.graph = graph
         self.source_node = source_node
         self.max_weight = max_weight 
@@ -41,36 +40,39 @@ class LabelAlgorithm:
         self._initialize_label_setup()
 
         # Step 1a: Select a label to be treated
-        untreated_indicies = self._get_remaining_label_indicies()
-        while len(untreated_indicies) != 0:
+        while len(self._get_remaining_label_indicies()) != 0:
             current_node = self._get_next_node()
             if current_node:
                 i = current_node.node_index
                 # Step 1b: select an untreated index of the node such that the total weight is minimal
                 #   meaning: given node i, select node index k from the list of untreated incoming nodes to i such 
                 #            that the weight of the edge (k, i) is the smallest among incoming edges to i
-                untreated_in_nodes = current_node.get_untreated_nodes()
-                k_in = None
-                for j_in in untreated_in_nodes:
-                    if k_in is not None:
-                        W_k_i = self.graph.wc_edges[k_in, i][0]    # the weight of edge (k, i)
-                        W_j_i = self.graph.wc_edges[j_in, i][0]    # the weight of edge (j, i)
-                        if W_j_i < W_k_i:
+                if current_node.node_index != self.source_node:
+                    untreated_in_nodes = current_node.get_untreated_nodes()
+                    k_in = untreated_in_nodes.pop()
+                    k_i_W_C = current_node.get_i_weight_cost(self.source_node, k_in, self.graph)
+                    for j_in in untreated_in_nodes:
+                        j_i_W_C = current_node.get_i_weight_cost(self.source_node, j_in, self.graph)
+                        if j_i_W_C[0] < k_i_W_C[0]:
                             k_in = j_in
-                    else:
-                        k_in = j_in
+                            k_i_W_C = j_i_W_C
+                else:
+                    k_i_W_C = (0, 0)
+                    k_in = self.source_node
                 # Step 2: Treat the label
-                W_k_i = self.graph.wc_edges[k_in, i][0]            # the weight of edge (k, i)
+                W_k_i = k_i_W_C[0]  # the weight of the path [s, ..., k, i]
+                C_k_i = k_i_W_C[1]  # the cost of the path [s, ..., k, i]
                 for j_out in current_node.outgoing_nodes:
                     w_i_j = self.graph.wc_edges[i, j_out][0]       # the weight of edge (i, j)
-                    if W_k_i + w_i_j <= self.max_weight:
-                        C_k_i = self.graph.wc_edges[k_in, i][1]    # cost of the edge (k, i)
+                    total_weight = W_k_i + w_i_j
+                    if total_weight <= self.max_weight:
                         c_i_j = self.graph.wc_edges[i, j_out][1]   # cost of the edge (i, j)
-                        if not current_node.is_label_dominated(W_k_i + w_i_j, C_k_i + c_i_j):
+                        total_cost = C_k_i + c_i_j
+                        if not self.node_labels[j_out].is_label_dominated(total_weight, total_cost):
                             # add the label to the next node: j
-                            self.node_labels[j_out].add_label(W_k_i + w_i_j, C_k_i + c_i_j, current_node.node_index)
-                current_node.treated_nodes.append(k_in)
+                            self.node_labels[j_out].add_label(total_weight, total_cost, current_node.node_index)
 
+                current_node.treated_nodes.append(k_in)
             else:
                 print("Error: untreated nodes remain yet no next node found")
                 break
@@ -115,7 +117,7 @@ class LabelAlgorithm:
         next_node: NodeLabel | None = None
 
         for node in self.node_labels.values():
-            if node.node_index != self.source_node and len(node.get_untreated_nodes()) != 0:
+            if len(node.get_untreated_nodes()) != 0:
                 next_node = node
                 break
 

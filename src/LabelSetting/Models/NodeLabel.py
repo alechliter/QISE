@@ -61,21 +61,28 @@ class NodeLabel:
         Returns:
             List[List[int]]: a list of paths
         """
-        paths: List[List[int]] = graph.get_simple_paths(source, incoming_node)
-        if len(paths) != 0:
-            for path in paths:
-                path.append[self.node_index]
+        paths: List[List[int]] = []
+
+        if source != self.node_index:
+            if source == incoming_node:
+                paths = graph.get_simple_paths(source, self.node_index)
+            else:
+                paths = graph.get_simple_paths(source, incoming_node)
+                if len(paths) != 0:
+                    for path in paths:
+                        path.append(self.node_index)
         return paths
     
     def get_i_weight_cost(self, source: int, incoming_node: int, graph: WCGraph) -> Tuple[int, int]:
-
         paths = self.get_i_paths(source, incoming_node, graph)
-        weight_cost: tuple[int, int] = graph.calc_path_weight_cost(paths[0])
-        for path in paths:
-            current_w_c = graph.calc_path_weight_cost(path)
-            if current_w_c[0] <= weight_cost[0] and current_w_c[1] < weight_cost[1]:
-                weight_cost = current_w_c
-
+        if len(paths) > 0:
+            weight_cost: tuple[int, int] = graph.calc_path_weight_cost(paths[0])
+            for path in paths:
+                current_w_c = graph.calc_path_weight_cost(path)
+                if current_w_c[0] <= weight_cost[0]:
+                    weight_cost = current_w_c
+        else:
+            weight_cost = None
         return weight_cost
 
     def is_label_dominated(self, weight: int, cost: int) -> bool:

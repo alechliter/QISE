@@ -73,14 +73,13 @@ class Graph:
         Returns:
             List[List[int]]: a list of paths (a path is an array of nodes)
         """
-        #TODO: Returns a generator object instead of an array
         paths = []
 
-        if not destination_node:
+        if destination_node is None:
             destination_node = len(Graph.get_nodes(self.edges)) - 1
 
-        if self.networkx_graph:
-            paths = networkx.all_simple_paths(self.networkx_graph, source_node, destination_node)
+        if self.networkx_graph and destination_node != source_node:
+            paths = [path for path in networkx.all_simple_paths(self.networkx_graph, source_node, destination_node)]
 
         return paths
     
