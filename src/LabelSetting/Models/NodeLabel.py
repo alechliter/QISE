@@ -31,7 +31,7 @@ class NodeLabel:
         self.incoming_nodes = incoming_nodes
         self.outgoing_nodes = outgoing_nodes
         self.treated_nodes: List[int] = []
-        self.labels: Dict[int, Tuple[int, int]] = { node: [] for node in incoming_nodes }
+        self.labels: Dict[int, Tuple[int, int]] = { node: () for node in incoming_nodes }
         self.paths: Dict[int, list[list[int]]] = { node: [] for node in incoming_nodes }
 
     def add_label(self, weight: int, cost: int, index: int) -> None:
@@ -47,43 +47,27 @@ class NodeLabel:
             self.incoming_nodes.append(index)
         
         self.labels[index] = (weight, cost)
-
-    def get_i_paths(self, source: int, incoming_node: int, graph: Graph) -> List[List[int]]:
+    
+    def get_lowest_weight_label(self) -> Tuple[int,  Tuple[int, int]] | None:
         """
-        Returns a list of all paths from the source node that pass through the given incoming
-        node to this node.
-
-        Args:
-            source (int): source node in the path
-            incoming_node (int): incoming node that the path passes through right before this node
-            graph (Graph): graph containing this node
+        Finds the label with the lowest weight for this node
 
         Returns:
-            List[List[int]]: a list of paths
+            Tuple[int,  Tuple[int, int]] | None: the node and corresponding label with the lowest weight, None if there are no labels
         """
-        paths: List[List[int]] = []
+        minimal_label: Tuple[int, int] | None = None
+        minimal_node: int = None
 
-        if source != self.node_index:
-            if source == incoming_node:
-                paths = graph.get_simple_paths(source, self.node_index)
-            else:
-                paths = graph.get_simple_paths(source, incoming_node)
-                if len(paths) != 0:
-                    for path in paths:
-                        path.append(self.node_index)
-        return paths
-    
-    def get_i_weight_cost(self, source: int, incoming_node: int, graph: WCGraph) -> Tuple[int, int]:
-        paths = self.get_i_paths(source, incoming_node, graph)
-        if len(paths) > 0:
-            weight_cost: tuple[int, int] = graph.calc_path_weight_cost(paths[0])
-            for path in paths:
-                current_w_c = graph.calc_path_weight_cost(path)
-                if current_w_c[0] <= weight_cost[0]:
-                    weight_cost = current_w_c
-        else:
-            weight_cost = None
-        return weight_cost
+        for node, label in self.labels.items():
+            if minimal_label is not None and len(label) != 0:
+                if label[0] < minimal_label[0] or (label[0] == minimal_label[0] and label[1] < minimal_label[1]):
+                    minimal_label = label
+                    minimal_node = node
+            elif len(label) != 0:
+                minimal_label = label
+                minimal_node = node
+
+        return (minimal_node, minimal_label)
 
     def is_label_dominated(self, weight: int, cost: int) -> bool:
         """
@@ -131,6 +115,52 @@ class NodeLabel:
         set_of_indicies = set(self.incoming_nodes)
         set_of_treated = set(self.treated_nodes)
         return set_of_indicies.difference(set_of_treated)
+    
+    def num_untreated_nodes(self) -> int:
+        """
+        Returns the number of untreated nodes left for the node
+
+        Returns:
+            int: number of untreated nodes
+        """
+        return len(self.get_untreated_nodes())
+
+    def get_i_paths(self, source: int, incoming_node: int, graph: Graph) -> List[List[int]]:
+        """
+        Returns a list of all paths from the source node that pass through the given incoming
+        node to this node.
+
+        Args:
+            source (int): source node in the path
+            incoming_node (int): incoming node that the path passes through right before this node
+            graph (Graph): graph containing this node
+
+        Returns:
+            List[List[int]]: a list of paths
+        """
+        paths: List[List[int]] = []
+
+        if source != self.node_index:
+            if source == incoming_node:
+                paths = graph.get_simple_paths(source, self.node_index)
+            else:
+                paths = graph.get_simple_paths(source, incoming_node)
+                if len(paths) != 0:
+                    for path in paths:
+                        path.append(self.node_index)
+        return paths
+    
+    def get_i_weight_cost(self, source: int, incoming_node: int, graph: WCGraph) -> Tuple[int, int]:
+        paths = self.get_i_paths(source, incoming_node, graph)
+        if len(paths) > 0:
+            weight_cost: tuple[int, int] = graph.calc_path_weight_cost(paths[0])
+            for path in paths:
+                current_w_c = graph.calc_path_weight_cost(path)
+                if current_w_c[0] <= weight_cost[0]:
+                    weight_cost = current_w_c
+        else:
+            weight_cost = None
+        return weight_cost
     
     @staticmethod
     def _is_label_dominated_in_list(weight: int, cost: int, labels: List[Tuple[int, int]]) -> bool:

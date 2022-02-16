@@ -1,4 +1,4 @@
-from typing import Dict, List, Set
+from typing import Dict, List, Set, Tuple
 
 from ...GraphModeling.models.WCGraph import WCGraph
 from ...GraphModeling.models.Graph import Graph
@@ -10,6 +10,8 @@ class LabelAlgorithm:
     node in a weight-constrained graph, applying the Label Setting Algorithm defined in the
     paper "Algorithms for the weight constrained shortest path problem" by Irina Dumitrescu
     and Natashia Boland.
+
+    v1 - calculates the paths from the source to the node for EVERY node in the graph. Inefficient but acccurate
 
     members:
         + node_labels (Dict[int, NodeLabel]): a list of NodeLabl objects, one for each node in the graph
@@ -23,7 +25,7 @@ class LabelAlgorithm:
         self.source_node: int = None
         self.max_weight: int = None
     
-    def run_algorithm(self, graph: WCGraph, source_node: int, max_weight: int):
+    def run_algorithm_v1(self, graph: WCGraph, source_node: int, max_weight: int):
         """
         Runs the Label Setting Algorithm on the given weight-constrained graph with the given source node.
 
@@ -76,7 +78,73 @@ class LabelAlgorithm:
             else:
                 print("Error: untreated nodes remain yet no next node found")
                 break
-            
+
+    def run_algorithm_v2(self, graph: WCGraph, source_node: int, max_weight: int):
+        """
+        Runs the Label Setting Algorithm on the given weight-constrained graph with the given source node.
+
+        v2 - start from the source node and work outward until every node has been treated
+
+        Args:
+            graph (WCGraph): the weight-constrained graph
+            source_node (int): the index that defines the source node
+            max_weight (itn): the maximum weight constraint
+        """
+        self.graph = graph
+        self.source_node = source_node
+        self.max_weight = max_weight 
+
+        # Step 0: Initialize the labels
+        self._initialize_label_setup()
+
+        # Step 1a: Select a label to be treated
+        while len(self._get_remaining_label_indicies()) != 0:
+
+            # Step 1b: select an untreated index of the node such that the total weight is minimal
+            #   meaning: given node i, select node index k from the list of untreated incoming nodes to i such 
+            #        
+            current_node: NodeLabel = self._rec_next_node(self.source_node)
+            if current_node is not None:
+                k_in: int = None
+                k_label: Tuple[int, int] = None
+                if current_node.node_index != self.source_node:
+                    # find the incoming node with a label with the lowest weight
+
+                    node_label = current_node.get_lowest_weight_label()
+                    k_in = node_label[0]
+                    k_label = node_label[1]
+
+                    # for j_in in current_node.incoming_nodes:
+                    #     if k_in is not None:
+                    #         j_label = self.node_labels[j_in].get_lowest_weight_label()
+                    #         if j_label[0] < k_label[0] or (j_label[0] == k_label[0] and j_label[1] < k_label[1]):
+                    #             k_label = j_label
+                    #     else:
+                    #         k_in = j_in
+                    #         k_label = self.node_labels[k_in].get_lowest_weight_label()
+                else:
+                    k_in = current_node.node_index
+                    k_label = current_node.labels[0]
+
+                # Step 2: Treat the label
+                W_k_i:int = k_label[0]  # the weight of the path [s, ..., k, i]
+                C_k_i:int = k_label[1]  # the cost of the path [s, ..., k, i]
+                i = current_node.node_index
+                for j_out in current_node.outgoing_nodes:
+                    w_i_j = self.graph.wc_edges[i, j_out][0]       # the weight of edge (i, j)
+                    total_weight = W_k_i + w_i_j
+                    if total_weight <= self.max_weight:
+                        c_i_j = self.graph.wc_edges[i, j_out][1]   # cost of the edge (i, j)
+                        total_cost = C_k_i + c_i_j
+                        if not self.node_labels[j_out].is_label_dominated(total_weight, total_cost):
+                            # add the label to the next node (j) and reset that node's treated_nodes
+                            self.node_labels[j_out].add_label(total_weight, total_cost, current_node.node_index)
+                            self.node_labels[j_out].treated_nodes = []
+
+                current_node.treated_nodes.append(k_in)
+            else:
+                print("Error: untreated nodes remain yet no next node found")
+                break
 
     def _initialize_label_setup(self) -> None:
         for node_index in Graph.get_nodes(self.graph.edges):
@@ -121,4 +189,42 @@ class LabelAlgorithm:
                 next_node = node
                 break
 
+        return next_node
+    
+    def _rec_next_node(self, from_node: int) -> NodeLabel | None:
+        """
+        Recursively finds the next node with untreated node-labels in the graph, treating the graph
+        as a tree with [from_node] as the root.
+
+        Args:
+            from_node (int): node index to check to begin search at as the root
+
+        Returns:
+            NodeLabel | None: the next node to treat
+        """
+        # case 1: all nodes have been treated from this tree 
+        # (found_node is a leaf - a node with no outgoing nodes)
+        next_node: NodeLabel | None = None
+
+        if len(self.node_labels[from_node].treated_nodes) == 0:
+            # case 2: from_node has untreated nodes
+            next_node = self.node_labels[from_node]
+        else:
+            # case 3: from_node has all treated nodes
+            child_nodes = self.node_labels[from_node].outgoing_nodes
+            if len(child_nodes) > 0:
+                # check each child node for any untreated nodes. Stop when one is found
+                untreated_children = []
+                for child in child_nodes:
+                    child_node = self.node_labels[child]
+                    if len(child_node.treated_nodes) == 0:
+                        untreated_children.append(child_node)
+                if len(untreated_children) > 0:
+                    next_node = untreated_children.pop()
+                else:
+                    # case 4: all child nodes have treated nodes: call _rec_next_node on each until one is found
+                    for child in child_nodes:
+                        next_node = self._rec_next_node(child)
+                        if next_node is not None:
+                            break
         return next_node
