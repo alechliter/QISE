@@ -59,6 +59,16 @@ class NodeLabel:
         """
         self.paths[incoming_node] = path + [ self.node_index ]
     
+    def get_lowest_weight_path(self) -> List[int]:
+        """
+        Returns the path with the lowest weight based on the current labels
+
+        Returns:
+            List[int]: a path of node indicies
+        """
+        incoming_node = self.get_lowest_weight_label()[0]
+        return self.paths[incoming_node].copy()
+    
     def get_lowest_weight_label(self) -> Tuple[int,  Tuple[int, int]] | None:
         """
         Finds the label with the lowest weight for this node

@@ -74,7 +74,7 @@ def main():
 
     test_graph_v1(graph, source_node = 0, destination_node = 6, weight = 6)
     test_graph_v2(graph, source_node = 0, destination_node = 6, weight = 6)
-    test_graph_v3(graph, source_node = 0, destination_node = 6, weight = 6)
+    # test_graph_v3(graph, source_node = 0, destination_node = 6, weight = 6)
 
     print("\ngraph:\n")
 
