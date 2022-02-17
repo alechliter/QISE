@@ -49,6 +49,16 @@ class NodeLabel:
         
         self.labels[index] = (weight, cost)
     
+    def add_path(self, path: List[int], incoming_node: int) -> None:
+        """
+        Adds the path from the source to the current node that passes through the given incoming node.
+
+        Args:
+            path (List[int]): a list of nodes from the source to this node
+            incoming_node (int): the incoming node in the path
+        """
+        self.paths[incoming_node] = path + [ self.node_index ]
+    
     def get_lowest_weight_label(self) -> Tuple[int,  Tuple[int, int]] | None:
         """
         Finds the label with the lowest weight for this node
