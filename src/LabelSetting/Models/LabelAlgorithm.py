@@ -76,6 +76,11 @@ class LabelAlgorithm:
                         if not self.node_labels[j_out].is_label_dominated(total_weight, total_cost):
                             # add the label to the next node: j
                             self.node_labels[j_out].add_label(total_weight, total_cost, current_node.node_index)
+                            # add the corresponding path from the source node to node j
+                            path_s_i = self.node_labels[k_in].get_lowest_weight_path()  # path from source node s to current node i
+                            if current_node.node_index != self.source_node:
+                                path_s_i += [current_node.node_index]
+                            self.node_labels[j_out].add_path(path_s_i, current_node.node_index)
 
                 current_node.treated_nodes.append(k_in)
             else:
@@ -142,10 +147,12 @@ class LabelAlgorithm:
                         if not self.node_labels[j_out].is_label_dominated(total_weight, total_cost):
                             # add the label to the next node (j) and remove that node from treated lists
                             self.node_labels[j_out].add_label(total_weight, total_cost, current_node.node_index)
+                            # add the corresponding path from the source node to node j
                             path_s_i = self.node_labels[k_in].get_lowest_weight_path()  # path from source node s to current node i
                             if current_node.node_index != self.source_node:
                                 path_s_i += [current_node.node_index]
                             self.node_labels[j_out].add_path(path_s_i, current_node.node_index)
+                            # update outgoing nodes from node j, signaling that they now need to be re-treated for node j
                             for node in self.node_labels[j_out].outgoing_nodes:
                                 if j_out in self.node_labels[node].treated_nodes:
                                     self.node_labels[node].treated_nodes.remove(j_out)
@@ -219,9 +226,14 @@ class LabelAlgorithm:
                     total_cost = C_k_i + c_i_j
                     # add the label to the next node (j) and remove that node from treated lists
                     self.node_labels[j_out].add_label(total_weight, total_cost, current_node.node_index)
+                    self.node_labels[j_out].add_path(path_s_i, current_node.node_index)                    
                     for node in self.node_labels[j_out].outgoing_nodes:
                         if j_out in self.node_labels[node].treated_nodes:
                             self.node_labels[node].treated_nodes.remove(j_out)
+                    # add the corresponding path from the source node to node j
+                    path_s_i = self.node_labels[k_in].get_lowest_weight_path()  # path from source node s to current node i
+                    if current_node.node_index != self.source_node:
+                        path_s_i += [current_node.node_index]
 
                 current_node.treated_nodes.append(k_in)
                 current_node.needs_visit = False

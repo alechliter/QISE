@@ -172,6 +172,17 @@ class NodeLabel:
         return paths
     
     def get_i_weight_cost(self, source: int, incoming_node: int, graph: WCGraph) -> Tuple[int, int]:
+        """
+        Returns the weight and cost label of the path with the lowest weight.
+
+        Args:
+            source (int): source node in the path
+            incoming_node (int): incoming node that the path passes through right before this node
+            graph (Graph): graph containing this node
+
+        Returns:
+            Tuple[int, int]: a tuple of the (weight, cost) of a path
+        """
         paths = self.get_i_paths(source, incoming_node, graph)
         if len(paths) > 0:
             weight_cost: tuple[int, int] = graph.calc_path_weight_cost(paths[0])
