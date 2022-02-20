@@ -1,4 +1,5 @@
 import numpy
+from numpy import random as r
 
 from typing import Dict, List, Tuple
 
@@ -33,7 +34,65 @@ class WCGraph(Graph):
         self._generate_weight_cost_matricies()
 
         pass
+    def get_random_weight_cost(self, mean_weight: int, mean_cost: int, std_weight:int=1, std_cost:int=1) -> tuple[int, int]:
+        """Generates a random cost-weight tuple based on input. Currently normal dist, but could test with other modes
 
+        Args:
+            mean_weight (int): mean weight in normal distribution
+            mean_cost (int): mean cost in normal distribution
+            std_weight (int, optional): standard deviation of weight. Defaults to 1.
+            std_cost (int, optional): standard deviation of cost. Defaults to 1.
+
+        Returns:
+            _type_: random weight-cost tuple integers
+        """    
+        #choose random cost and weight (normal)
+        random_weight = int(max(numpy.floor(r.normal(mean_weight,std_weight)),1))
+        random_cost = int(max(numpy.floor(r.normal(mean_cost,std_cost)),1))
+        
+        return (random_weight,random_cost)
+    
+    def get_arbitrary_graph(n: int, mean_weight: int, mean_cost: int, std_weight:int=1, std_cost:int=1) -> Graph:
+        """Generates arbitrary WC graph with n nodes with normally distributed weights and costs
+
+        Args:
+            n (int): number of nodes
+            mean_weight (int): mean weight
+            mean_cost (int): mean cost
+            std_weight (int): standard deviation of weight
+            std_cost (int): standard deviation of cost
+
+        Returns:
+            Graph: arbitary WC graph with (w,c) normally distributed
+        """
+        graphDict = {}
+        graph = WCGraph(graphDict)
+        #Loop i range(0,n)
+        for i in range(0,n-1):
+            #Random Noe range(i,n) # of outgoing edges
+            N_oe = r.randint(1,n-i) if n-i>1 else 1
+            #print("i :", i, "\tN_oe: ", N_oe)
+            #Choose Noe unique nodes range(1,n) delta_o[]
+            delta_o = r.choice([*range(i+1,n)], N_oe, replace=False) if i!=n-1 else [n]
+            #For each j in delta_o[], add edge (i,j)
+            for j in delta_o:
+                #TODO: This currently returns an error - "'int' object has no attribute 'get_random_weight_cost'"
+                graphDict[i,j] = graph.get_random_weight_cost(mean_weight, mean_cost, std_weight=std_weight, std_cost=std_cost)
+            #If no incoming nodes
+            oneInNode = False
+            for k in range(0,i):
+                if((k,i) in graphDict):
+                    oneInNode = True
+                    break
+            if not oneInNode and i != 0:
+                #Choose node incoming n_in range(0,i-1)
+                n_in = r.randint(0,i-1) if i>1 else 0
+                #Add edge (n_in,i)
+                graphDict[n_in,i] = graph.get_random_weight_cost(mean_weight, mean_cost, std_weight=std_weight, std_cost=std_cost)
+            
+        graph = WCGraph(graphDict)
+        return graph
+    
     def find_wc_paths(self, weight: int, source_node: int = 0, destination_node: int | None = None) -> List[List[int]]:
         """Creates a list of each path in the graph that follows the weight constraint.
 
