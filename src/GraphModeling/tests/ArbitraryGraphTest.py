@@ -10,14 +10,16 @@ from ..models.WCGraph import WCGraph
 import networkx
 
 def main():
-    print(WCGraph.get_random_weight_cost(5,5,3, std_cost=3))
-    for i in range(1,6):
-        graph = WCGraph.get_arbitrary_graph(5,5,3,std_weight=2)
-        print(f"Paths of the graph {i}")
-        print_paths(graph.get_simple_paths())
-        print(f"Nodes in the graph: {WCGraph.get_nodes(graph.edges)}")
-        # graph.print_graph()
-        graph.print_graph(picture_name = f"resources/ArbitraryGraphTestResults/arb5graph_{i}")
+    # for i in range(1,6):
+    graph = get_arbitrary_graph(6,5,3,std_weight=2)
+    graph.print_graph(picture_name = f"resources/ArbitraryGraphTestResults/arb6graph_spiral", show_minimal_output=False, DELETE_ME=True)
+    graph.print_graph(picture_name = f"resources/ArbitraryGraphTestResults/arb6graph", show_minimal_output=False)
+    graph.print_graph(picture_name = f"resources/ArbitraryGraphTestResults/arb6graph_minout",show_minimal_output=True)
+        # print(f"Paths of the graph {i}")
+        # print_paths(graph.get_simple_paths())
+        # print(f"Nodes in the graph: {WCGraph.get_nodes(graph.edges)}")
+        # # graph.print_graph()
+        # graph.print_graph(picture_name = f"resources/ArbitraryGraphTestResults/arb5graph_{i}", suppress_text_output=True)
     
 
 def get_random_weight_cost(mean_weight: int, mean_cost: int, std_weight:int=1, std_cost:int=1):
