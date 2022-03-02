@@ -66,6 +66,10 @@ def main():
     })
 
     test_graph(graph_2, weight = 6)
+    graph_2.save_to_json("graph_save_test_01")
+
+    graph_3 = WCGraph.load_json_graph("graph_save_test_01")
+    graph_3.print_graph()
 
 if __name__ == "__main__":
     main()
