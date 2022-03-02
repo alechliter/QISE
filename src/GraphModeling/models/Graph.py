@@ -49,7 +49,6 @@ class Graph:
             print("Edges of Graph:")
             print(f"|    {self.networkx_graph.edges()}")
         
-        #TODO: Fix positioning bug - nodes should be in counterclockwise order (should also fix color map bug)
         #TODO: Alter size of nodes and lines with size of graph
         networkx.draw_networkx(self.networkx_graph, 
             pos = networkx.circular_layout(self.networkx_graph), node_color = self.get_color_map(len(self.networkx_graph)))
@@ -102,11 +101,11 @@ class Graph:
         color_map = []
         for i in range(0,n):
             if i == s:
-                color_map.append("green")
+                color_map.append("#00ff44")
             elif i == t:
-                color_map.append("red")
+                color_map.append("#ffff00")
             else:
-                color_map.append("blue")    
+                color_map.append("#00f2ff")
         return color_map
     
     def get_incoming_nodes(self, node: int) -> List[int]:

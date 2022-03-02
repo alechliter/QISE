@@ -12,7 +12,7 @@ def print_test_results(labels: LabelAlgorithm, destination_node: int):
         print(f"|   Untreated nodes: {label.get_untreated_nodes()}\n")
 
     efficient_labels = labels.node_labels[destination_node].get_efficient_labels()
-    print(f"|   Efficient labels for the destination node:\n|  |   {efficient_labels}\n")
+    print(f"|   Efficient labels for the destination node:\n|   |   {efficient_labels}\n")
     print(f"|   Efficient Paths:")
     for node in efficient_labels.keys():
         print(f"|    |   {labels.node_labels[destination_node].paths[node]}")
@@ -78,6 +78,11 @@ def main():
 
     print("\ngraph:\n")
 
+    graph.print_graph()
+
+    # Large graph test
+    graph = WCGraph.get_arbitrary_graph(50)
+    test_graph_v2(graph, source_node = 0, destination_node = 49, weight = 40)
     graph.print_graph()
 
 if __name__ == "__main__":
