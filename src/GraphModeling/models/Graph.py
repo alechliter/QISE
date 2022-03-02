@@ -34,7 +34,7 @@ class Graph:
         self._initialize_networkx_graph()
 
         
-    def print_graph(self, picture_name: str = "", edge_labels: Dict[Tuple[int, int], str] | None = None, suppress_text_output: bool = False) -> None:
+    def print_graph(self, picture_name: str = "", edge_labels: Dict[Tuple[int, int], str] | None = None, show_minimal_output: bool = False) -> None:
         """
         Prints the graph using the networkx graph representation and pyplot.
 
@@ -43,7 +43,7 @@ class Graph:
             edge_labels (Dict[Tuple[int, int], str] | None, optional): The dictionary of edges to labels. Defaults to None.
             suppress_text_output (bool): Supresses print statements and edge labels from being printed on the graph. Defaults to False
         """
-        if(not suppress_text_output):
+        if(not show_minimal_output):
             print("Nodes on Graph:")
             print(f"|    {self.networkx_graph.nodes()}")
             print("Edges of Graph:")
@@ -51,9 +51,10 @@ class Graph:
         
         #TODO: Alter size of nodes and lines with size of graph
         networkx.draw_networkx(self.networkx_graph, 
-            pos = networkx.circular_layout(self.networkx_graph), node_color = self.get_color_map(len(self.networkx_graph)))
+            pos = networkx.circular_layout(self.networkx_graph), node_color = self.get_color_map(len(self.networkx_graph)),
+            with_labels = not show_minimal_output, node_size=100 if show_minimal_output else 300, arrows = not show_minimal_output)
         
-        if edge_labels and not suppress_text_output:
+        if edge_labels and not show_minimal_output:
             networkx.draw_networkx_edge_labels(self.networkx_graph, edge_labels = edge_labels, pos = networkx.circular_layout(self.networkx_graph))
 
         if picture_name != "":

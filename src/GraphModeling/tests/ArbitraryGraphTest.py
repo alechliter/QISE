@@ -5,26 +5,53 @@ from numpy import random as r
 from collections.abc import Sequence
 
 from ..models.Graph import Graph
+from ..models.WCGraph import WCGraph
 
 import networkx
 
 def main():
-    for i in range(1,11):
-        graph = Graph.get_arbitrary_graph(5)
-        print(f"Paths of the graph {i}")
-        print_paths(graph.get_simple_paths())
-        print(f"Nodes in the graph: {Graph.get_nodes(graph.edges)}")
-        graph.print_graph(picture_name = f"resources/ArbitraryGraphTestResults/arb5graph_{i}", suppress_text_output=True)
+    # for i in range(1,6):
+    graph = get_arbitrary_graph(6,5,3,std_weight=2)
+    graph.print_graph(picture_name = f"resources/ArbitraryGraphTestResults/arb6graph_spiral", show_minimal_output=False, DELETE_ME=True)
+    graph.print_graph(picture_name = f"resources/ArbitraryGraphTestResults/arb6graph", show_minimal_output=False)
+    graph.print_graph(picture_name = f"resources/ArbitraryGraphTestResults/arb6graph_minout",show_minimal_output=True)
+        # print(f"Paths of the graph {i}")
+        # print_paths(graph.get_simple_paths())
+        # print(f"Nodes in the graph: {WCGraph.get_nodes(graph.edges)}")
+        # # graph.print_graph()
+        # graph.print_graph(picture_name = f"resources/ArbitraryGraphTestResults/arb5graph_{i}", suppress_text_output=True)
     
 
-def get_arbitrary_graph(n: int) -> Graph:
-    """Generates arbitrary WC graph with n nodes and no weights or costs
+def get_random_weight_cost(mean_weight: int, mean_cost: int, std_weight:int=1, std_cost:int=1):
+    """Generates a random cost-weight tuple based on input. Currently normal dist, but could test with other modes
+
+    Args:
+        mean_weight (int): mean weight in normal distribution
+        mean_cost (int): mean cost in normal distribution
+        std_weight (int, optional): standard deviation of weight. Defaults to 1.
+        std_cost (int, optional): standard deviation of cost. Defaults to 1.
+
+    Returns:
+        _type_: random weight-cost tuple integers
+    """    
+    #choose random cost and weight (normal)
+    random_weight = int(max(numpy.floor(r.normal(mean_weight,std_weight)),1))
+    random_cost = int(max(numpy.floor(r.normal(mean_cost,std_cost)),1))
+    
+    return (random_weight,random_cost)
+
+def get_arbitrary_graph(n: int, mean_weight: int, mean_cost: int, std_weight:int=1, std_cost:int=1) -> Graph:
+    """Generates arbitrary WC graph with n nodes with normally distributed weights and costs
 
     Args:
         n (int): number of nodes
+        mean_weight (int): mean weight
+        mean_cost (int): mean cost
+        std_weight (int): standard deviation of weight
+        std_cost (int): standard deviation of cost
 
     Returns:
-        Graph: arbitary WC graph with all (w,c) = (0,0)
+        Graph: arbitary WC graph with (w,c) normally distributed
     """
     graphDict = {}
     #Loop i range(0,n)
@@ -36,8 +63,7 @@ def get_arbitrary_graph(n: int) -> Graph:
         delta_o = r.choice([*range(i+1,n)], N_oe, replace=False) if i!=n-1 else [n]
         #For each j in delta_o[], add edge (i,j)
         for j in delta_o:
-            #TODO: Add weights and cost generation -> can only do to a WCGraph
-            graphDict[i,j] = (0,0)
+            graphDict[i,j] = get_random_weight_cost(mean_weight, mean_cost, std_weight=std_weight, std_cost=std_cost)
         #If no incoming nodes
         oneInNode = False
         for k in range(0,i):
@@ -48,10 +74,9 @@ def get_arbitrary_graph(n: int) -> Graph:
             #Choose node incoming n_in range(0,i-1)
             n_in = r.randint(0,i-1) if i>1 else 0
             #Add edge (n_in,i)
-            #TODO: Add weight and const
-            graphDict[n_in,i] = (0,0)
+            graphDict[n_in,i] = get_random_weight_cost(mean_weight, mean_cost, std_weight=std_weight, std_cost=std_cost)
         
-    graph = Graph(graphDict)
+    graph = WCGraph(graphDict)
     return graph
 
 def get_maximal_graph(n: int) -> dict:
