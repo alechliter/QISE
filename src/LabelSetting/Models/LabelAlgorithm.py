@@ -121,15 +121,22 @@ class LabelAlgorithm:
                 if current_node.node_index != self.source_node:
                     # find the incoming node with a label with the lowest weight
                     for j_in in current_node.get_untreated_nodes():
-                        if k_in is not None:
-                            j_label = self.node_labels[j_in].get_lowest_weight_label()[1]
+                        j_label = self.node_labels[j_in].get_lowest_weight_label()[1]
+                        if k_label is not None and j_label is not None:
                             if j_label[0] < k_label[0] or (j_label[0] == k_label[0] and j_label[1] < k_label[1]):
+                                k_in = j_in
                                 k_label = j_label
-                        else:
+                        elif k_label is None:
                             k_in = j_in
-                            k_label = self.node_labels[k_in].get_lowest_weight_label()[1]
-                    W_k_i = k_label[0] + self.graph.wc_edges[k_in, i][0]    # the weight of the path [s, ..., k, i]
-                    C_k_i = k_label[1] + self.graph.wc_edges[k_in, i][1]    # the cost of the path [s, ..., k, i]
+                            k_label = j_label
+                    if k_label is not None:
+                        W_k_i = k_label[0] + self.graph.wc_edges[k_in, i][0]    # the weight of the path [s, ..., k, i]
+                        C_k_i = k_label[1] + self.graph.wc_edges[k_in, i][1]    # the cost of the path [s, ..., k, i]
+                    else:
+                        # Special case: only incoming nodes that don't have any labels are untreated, skip for now.
+                        current_node.treated_nodes.append(k_in)
+                        current_node.needs_visit = False
+                        continue
                 else:
                     # current node is the source node, so no incoming nodes exists (that we care about)
                     k_in = current_node.node_index

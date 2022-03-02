@@ -12,7 +12,7 @@ def print_matrix(matrix: numpy.ndarray) -> None:
     for column in matrix:
         print(f"|    {column}")
 
-def test_graph(graph: WCGraph, weight):
+def print_graph_details(graph: WCGraph):
     print("Connection Matrix")
     print_matrix(graph.connection_matrix)
 
@@ -21,6 +21,9 @@ def test_graph(graph: WCGraph, weight):
 
     print("Cost Matrix")
     print_matrix(graph.cost_matrix)
+
+def test_graph(graph: WCGraph, weight):
+    print_graph_details(graph)
 
     print("Simple Paths:")
     print_paths(graph.get_simple_paths())

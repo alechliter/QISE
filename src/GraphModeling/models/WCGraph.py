@@ -34,7 +34,9 @@ class WCGraph(Graph):
         self._generate_weight_cost_matricies()
 
         pass
-    def get_random_weight_cost(self, mean_weight: int, mean_cost: int, std_weight:int=1, std_cost:int=1) -> tuple[int, int]:
+
+    @staticmethod
+    def get_random_weight_cost(mean_weight: int, mean_cost: int, std_weight:int=1, std_cost:int=1) -> tuple[int, int]:
         """Generates a random cost-weight tuple based on input. Currently normal dist, but could test with other modes
 
         Args:
@@ -66,7 +68,6 @@ class WCGraph(Graph):
             Graph: arbitary WC graph with (w,c) normally distributed
         """
         graphDict = {}
-        graph = WCGraph(graphDict)
         #Loop i range(0,n)
         for i in range(0,n-1):
             #Random Noe range(i,n) # of outgoing edges
@@ -76,8 +77,7 @@ class WCGraph(Graph):
             delta_o = r.choice([*range(i+1,n)], N_oe, replace=False) if i!=n-1 else [n]
             #For each j in delta_o[], add edge (i,j)
             for j in delta_o:
-                #TODO: This currently returns an error - "'int' object has no attribute 'get_random_weight_cost'"
-                graphDict[i,j] = graph.get_random_weight_cost(mean_weight, mean_cost, std_weight=std_weight, std_cost=std_cost)
+                graphDict[i,j] = WCGraph.get_random_weight_cost(mean_weight, mean_cost, std_weight=std_weight, std_cost=std_cost)
             #If no incoming nodes
             oneInNode = False
             for k in range(0,i):
@@ -88,10 +88,9 @@ class WCGraph(Graph):
                 #Choose node incoming n_in range(0,i-1)
                 n_in = r.randint(0,i-1) if i>1 else 0
                 #Add edge (n_in,i)
-                graphDict[n_in,i] = graph.get_random_weight_cost(mean_weight, mean_cost, std_weight=std_weight, std_cost=std_cost)
+                graphDict[n_in,i] = WCGraph.get_random_weight_cost(mean_weight, mean_cost, std_weight=std_weight, std_cost=std_cost)
             
-        graph = WCGraph(graphDict)
-        return graph
+        return WCGraph(graphDict)
     
     def find_wc_paths(self, weight: int, source_node: int = 0, destination_node: int | None = None) -> List[List[int]]:
         """Creates a list of each path in the graph that follows the weight constraint.
