@@ -9,8 +9,15 @@ def print_paths(paths: Sequence) -> None:
         print(f"|    {path}")
 
 def print_matrix(matrix: numpy.ndarray) -> None:
-    for column in matrix:
-        print(f"|    {column}")
+    node_header = " ".join(["{0:2d}".format(i) for i in range(0, len(matrix[0]))])
+    divider = "_" * len(node_header)
+    print(f"|     {node_header}")
+    print(f"|     {divider}")
+    node_num = 0
+    for row in matrix:
+        row_str = " ".join(["{0:2d}".format(int(node)) for node in row])
+        print("|  {0:2d}|{1}".format(node_num, row_str))
+        node_num += 1
 
 def print_graph_details(graph: WCGraph):
     print("Connection Matrix")

@@ -327,7 +327,12 @@ class LabelAlgorithm:
                 else:
                     # case 4: all child nodes have treated nodes: call _rec_next_node on each until one is found
                     for child in child_nodes:
+                        print(f"Parent: {self.node_labels[from_node].node_index}  Child: {child_node.node_index}")
                         next_node = self._rec_next_node(child)
                         if next_node is not None:
                             break
+        if next_node:
+            print(next_node.node_index)
+        else:
+            print("No node found")
         return next_node
