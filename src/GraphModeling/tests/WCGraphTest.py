@@ -9,10 +9,17 @@ def print_paths(paths: Sequence) -> None:
         print(f"|    {path}")
 
 def print_matrix(matrix: numpy.ndarray) -> None:
-    for column in matrix:
-        print(f"|    {column}")
+    node_header = " ".join(["{0:2d}".format(i) for i in range(0, len(matrix[0]))])
+    divider = "_" * len(node_header)
+    print(f"|     {node_header}")
+    print(f"|     {divider}")
+    node_num = 0
+    for row in matrix:
+        row_str = " ".join(["{0:2d}".format(int(node)) for node in row])
+        print("|  {0:2d}|{1}".format(node_num, row_str))
+        node_num += 1
 
-def test_graph(graph: WCGraph, weight):
+def print_graph_details(graph: WCGraph):
     print("Connection Matrix")
     print_matrix(graph.connection_matrix)
 
@@ -21,6 +28,9 @@ def test_graph(graph: WCGraph, weight):
 
     print("Cost Matrix")
     print_matrix(graph.cost_matrix)
+
+def test_graph(graph: WCGraph, weight):
+    print_graph_details(graph)
 
     print("Simple Paths:")
     print_paths(graph.get_simple_paths())
@@ -63,6 +73,10 @@ def main():
     })
 
     test_graph(graph_2, weight = 6)
+    graph_2.save_to_json("graph_save_test_01")
+
+    graph_3 = WCGraph.load_json_graph("graph_save_test_01")
+    graph_3.print_graph()
 
 if __name__ == "__main__":
     main()

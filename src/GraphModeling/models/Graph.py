@@ -102,11 +102,11 @@ class Graph:
         color_map = []
         for i in range(0,n):
             if i == s:
-                color_map.append("green")
+                color_map.append("#00ff44")
             elif i == t:
-                color_map.append("red")
+                color_map.append("#ffff00")
             else:
-                color_map.append("blue")    
+                color_map.append("#00f2ff")
         return color_map
     
     def get_incoming_nodes(self, node: int) -> List[int]:
