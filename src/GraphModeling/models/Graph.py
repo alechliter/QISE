@@ -34,7 +34,8 @@ class Graph:
         self._initialize_networkx_graph()
 
         
-    def print_graph(self, picture_name: str = "", edge_labels: Dict[Tuple[int, int], str] | None = None, show_minimal_output: bool = False) -> None:
+    def print_graph(self, picture_name: str = "", edge_labels: Dict[Tuple[int, int], str] | None = None, show_minimal_output: bool = False,
+                    highlight_edges = []) -> None:
         """
         Prints the graph using the networkx graph representation and pyplot.
 
@@ -49,6 +50,7 @@ class Graph:
             print("Edges of Graph:")
             print(f"|    {self.networkx_graph.edges()}")
         
+        
         #TODO: Alter size of nodes and lines with size of graph
         networkx.draw_networkx(self.networkx_graph, 
             pos = networkx.circular_layout(self.networkx_graph), node_color = self.get_color_map(len(self.networkx_graph)),
@@ -60,6 +62,16 @@ class Graph:
         if picture_name != "":
             #TODO: Add a parameter to save this in the folder the .py file running the program is in or choice of location
             pyplot.savefig(picture_name) #save as png
+            
+        if len(highlight_edges)>0:
+            networkx.draw_networkx_edges(
+                self.networkx_graph,
+                pos = networkx.circular_layout(self.networkx_graph),
+                edgelist=highlight_edges,
+                width=8,
+                alpha=0.5,
+                edge_color="tab:red",
+            )
         pyplot.show() #display
 
     def get_simple_paths(self, source_node: int = 0, destination_node: int | None = None) -> List[List[int]]:

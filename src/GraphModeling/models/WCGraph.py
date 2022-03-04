@@ -137,7 +137,7 @@ class WCGraph(Graph):
 
         return (total_weight, total_cost)
 
-    def print_graph(self, picture_name: str = "", show_minimal_output: bool = False) -> None:
+    def print_graph(self, picture_name: str = "", show_minimal_output: bool = False, highlight_edges = []) -> None:
         """
         Prints the graph with (weight, cost) labels for each edge
 
@@ -150,7 +150,7 @@ class WCGraph(Graph):
         for edge, constraints in self.wc_edges.items():
             edge_labels[edge] = f"{constraints[0]}, {constraints[1]}"
 
-        super(WCGraph, self).print_graph(picture_name, edge_labels, show_minimal_output)
+        super(WCGraph, self).print_graph(picture_name, edge_labels, show_minimal_output, highlight_edges)
     
     def save_to_json(self, graph_name: str):
         json_object = self._gen_json_object()
