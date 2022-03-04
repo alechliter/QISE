@@ -108,7 +108,24 @@ def test_2():
 
     test_graph_v2(graph, source_node = 0, destination_node = 6, weight = 6)
 
-def test_3():
+
+def test_medium_graph():
+    num_nodes = 35
+    graph: WCGraph = WCGraph.get_arbitrary_graph(n = num_nodes, mean_weight = 5, mean_cost = 5)
+
+    try:
+        test_graph_v2(graph, source_node = 0, destination_node = num_nodes - 1, weight = 100) 
+    except Exception as error:
+        graph.save_to_json("LabelAlgorithm_MediumGraph_Crash")
+        print(f"Error: {error.__doc__}. Saving graph.")
+    except:
+        graph.save_to_json("LabelAlgorithm_MediumGraph_UnexpectedCrash")
+        print(f"Unexpected error: {sys.exc_info()[0]}")
+
+    print("\ngraph:\n")
+    graph.print_graph(show_minimal_output = True)
+
+def test_large_graph():
     graph: WCGraph = WCGraph.get_arbitrary_graph(n = 50, mean_weight = 10, mean_cost = 5)
 
     try:
@@ -123,13 +140,29 @@ def test_3():
     print("\ngraph:\n")
     graph.print_graph(show_minimal_output=True)
 
+def test_massive_graph():
+    num_nodes = 100
+    graph: WCGraph = WCGraph.get_arbitrary_graph(n = num_nodes, mean_weight = 10, mean_cost = 5)
+
+    try:
+        test_graph_v2(graph, source_node = 0, destination_node = num_nodes - 1, weight = num_nodes) 
+    except Exception as error:
+        graph.save_to_json("LabelAlgorithm_MassiveGraph_Crash")
+        print(f"Error: {error.__doc__}. Saving graph.")
+    except:
+        graph.save_to_json("LabelAlgorithm_MassiveGraph_UnexpectedCrash")
+        print(f"Unexpected error: {sys.exc_info()[0]}")
+
+    print("\ngraph:\n")
+    graph.print_graph(show_minimal_output=True)
+
 def test_load(graph_name: str):
     graph: WCGraph = WCGraph.load_json_graph(graph_name)
     
     try:
-        test_graph_v2(graph, source_node = 0, destination_node = 49, weight  =49)
+        test_graph_v2(graph, source_node = 0, destination_node = 49, weight  = 1000)
     except:
-        graph.print_graph(show_minimal_output=True)
+        graph.print_graph(show_minimal_output = True)
         print(f"\n\nnum cycles: {len(list(networkx.simple_cycles(graph.networkx_graph)))}")
         print_matrix(graph.connection_matrix)
 
@@ -141,11 +174,20 @@ def main():
     #test_1()
     #test_2()
 
+
+    # Medium graph test
+    # test_medium_graph()
+
     # Large graph test
-    #test_3()
+    #test_large_graph()
+
+    # Massive Graph Test
+    #test_massive_graph()
 
     # Test loaded graph
     test_load("LabelAlgorithm_LargeGraph_UnexpectedCrash")
+    # test_load("LabelAlgorithm_MediumGraph_UnexpectedCrash")
+    # test_load("LabelAlgorithm_MassiveGraph_UnexpectedCrash")
 
 
 if __name__ == "__main__":

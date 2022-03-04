@@ -112,6 +112,7 @@ class LabelAlgorithm:
             #   meaning: given node i, select node index k from the list of untreated incoming nodes to i such 
             #            that the weight of the edge (k, i) is the smallest among incoming edges to i
             current_node: NodeLabel = self._rec_next_node(self.source_node)
+            print(f"Current Node: {current_node.node_index}")
             if current_node is not None:
                 i = current_node.node_index
                 k_in: int = None
@@ -291,6 +292,7 @@ class LabelAlgorithm:
             if len(node.get_untreated_nodes()) != 0:
                 next_node = node
                 break
+        print (next_node.node_index)
 
         return next_node
     
@@ -308,7 +310,7 @@ class LabelAlgorithm:
         # case 1: all nodes have been treated from this tree 
         # (found_node is a leaf - a node with no outgoing nodes)
         next_node: NodeLabel | None = None
-
+        # print(f"{from_node}")
         if self.node_labels[from_node].num_untreated_nodes() > 0:
             # case 2: from_node has untreated nodes
             next_node = self.node_labels[from_node]
@@ -327,12 +329,12 @@ class LabelAlgorithm:
                 else:
                     # case 4: all child nodes have treated nodes: call _rec_next_node on each until one is found
                     for child in child_nodes:
-                        print(f"Parent: {self.node_labels[from_node].node_index}  Child: {child_node.node_index}")
+                        # print(f"Parent: {self.node_labels[from_node].node_index}  Child: {child_node.node_index}")
                         next_node = self._rec_next_node(child)
                         if next_node is not None:
                             break
-        if next_node:
-            print(next_node.node_index)
-        else:
-            print("No node found")
+        # if next_node:
+        #     print(next_node.node_index)
+        # else:
+        #     print("No node found")
         return next_node
