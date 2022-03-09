@@ -49,6 +49,9 @@ class Graph:
             print(f"|    {self.networkx_graph.nodes()}")
             print("Edges of Graph:")
             print(f"|    {self.networkx_graph.edges()}")
+            line_width = 8
+        else:
+            line_width = 4
         
         
         #TODO: Alter size of nodes and lines with size of graph
@@ -68,7 +71,7 @@ class Graph:
                 self.networkx_graph,
                 pos = networkx.circular_layout(self.networkx_graph),
                 edgelist=highlight_edges,
-                width=8,
+                width=line_width,
                 alpha=0.5,
                 edge_color="tab:red",
             )
