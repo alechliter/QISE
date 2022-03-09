@@ -22,8 +22,6 @@ class SpanningTree:
             child_node = self.gen_spanning_tree(child)
             root.children.append(child_node)
 
-        print(root.index)
-
         return root
     
     @staticmethod

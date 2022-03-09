@@ -4,12 +4,15 @@ import networkx
 from types import LambdaType
 from src.GraphModeling.models.Graph import Graph
 from src.GraphModeling.models.WCGraph import WCGraph
-from src.LabelSetting.Models.LabelAlgorithm import LabelAlgorithm
+from src.LabelSetting.Models.LabelAlgorithm import LabelAlgorithmBase
 
 from src.GraphModeling.tests.WCGraphTest import print_graph_details, print_matrix
+from src.LabelSetting.Models.LabelAlgorithmIter import LabelAlgorithmIter
+from src.LabelSetting.Models.LabelAlgorithmRec import LabelAlgorithmRec
+from src.LabelSetting.Models.LabelAlgorithmSpanTree import LabelAlgorithmSpanTree
 from src.LabelSetting.Models.SpanningTree import SpanningTree
 
-def print_test_results(labels: LabelAlgorithm, destination_node: int):
+def print_test_results(labels: LabelAlgorithmBase, destination_node: int):
     for node, label in labels.node_labels.items():
         print(f"|   Labels for node {node}:")
         print(f"|   |   {label.labels}")
@@ -23,8 +26,8 @@ def print_test_results(labels: LabelAlgorithm, destination_node: int):
     for node in efficient_labels.keys():
         print(f"|    |   {labels.node_labels[destination_node].paths[node]}")
 
-def setup(graph: WCGraph) -> LabelAlgorithm:
-    labels = LabelAlgorithm()
+def print_graph_info(graph: WCGraph, title: str):
+    print(f"\n{title}\n")
 
     print(graph.connection_matrix)
     print(graph.weight_matrix)
@@ -34,43 +37,48 @@ def setup(graph: WCGraph) -> LabelAlgorithm:
         # find the incoming and outgoing nodes of the current node
         print(f"Incoming Nodes for node {node_index}: {graph.get_incoming_nodes(node_index)}")
         print(f"Outgoing Nodes for node {node_index}: {graph.get_outgoing_nodes(node_index)}")
-    
-    return labels
 
-def test_graph_v1(graph: WCGraph, source_node: int, destination_node: int, weight: int):
-    print("\nLabel Algorithm v1\n")
-    labels = setup(graph)
+def test_label_iterative(graph: WCGraph, source_node: int, destination_node: int, weight: int):
+    print_graph_info(graph, "Label Algorithm - Iterative")
 
-    labels.run_algorithm_v1(graph, source_node, weight)
+    labels = LabelAlgorithmIter()
 
-    print_test_results(labels, destination_node)
-
-def test_graph_v2(graph: WCGraph, source_node: int, destination_node: int, weight: int):
-    print("\nLabel Algorithm v2\n")
-    labels = setup(graph)
-
-    labels.run_algorithm_v2(graph, source_node, weight)
+    labels.run_algorithm(graph, source_node, weight)
 
     print_test_results(labels, destination_node)
     return labels
 
-def test_graph_v3(graph: WCGraph, source_node: int, destination_node: int, weight: int):
-    print("\nLabel Algorithm v3\n")
-    labels = setup(graph)
+def test_label_recursive(graph: WCGraph, source_node: int, destination_node: int, weight: int):
+    print_graph_info(graph, "Label Algorithm - Recursive")
 
-    labels.run_algorithm_v3(graph, source_node, weight)
+    labels = LabelAlgorithmRec()
+
+    labels.run_algorithm(graph, source_node, weight)
 
     print_test_results(labels, destination_node)
+    return labels
 
-def test_graph_v4(graph: WCGraph, source_node: int, destination_node: int, weight: int):
-    print("\nLabel Algorithm - Generate all possible labels\n")
-    labels = setup(graph)
+def test_label_spantree(graph: WCGraph, source_node: int, destination_node: int, weight: int):
+    print_graph_info(graph, "Label Algorithm - Spanning Tree")
+
+    labels = LabelAlgorithmSpanTree()
+
+    labels.run_algorithm(graph, source_node, weight)
+
+    print_test_results(labels, destination_node)
+    return labels
+
+def test_label_rec_all_labels(graph: WCGraph, source_node: int, destination_node: int, weight: int):
+    print_graph_info(graph, "Label Algorithm - Generate all possible labels")
+
+    labels = LabelAlgorithmRec()
 
     labels.gen_all_possible_labels(graph, source_node, weight)
 
     print_test_results(labels, destination_node)
+    return labels
 
-def test_1():
+def test_1_simple_graph_on_all():
     graph = WCGraph({
         #edge    constraint
         #s  t    w  c
@@ -87,15 +95,15 @@ def test_1():
         (5, 6): (1, 1)
     })
 
-    test_graph_v1(graph, source_node = 0, destination_node = 6, weight = 6)
-    test_graph_v2(graph, source_node = 0, destination_node = 6, weight = 6)
-    test_graph_v3(graph, source_node = 0, destination_node = 6, weight = 6)
+    test_label_iterative(graph, source_node = 0, destination_node = 6, weight = 6)
+    test_label_recursive(graph, source_node = 0, destination_node = 6, weight = 6)
+    test_label_spantree(graph, source_node = 0, destination_node = 6, weight = 6)
 
     print("\ngraph:\n")
 
     graph.print_graph()
 
-def test_2():
+def test_2_moderate_graph_rec():
     graph = WCGraph({
         #edge    constraint
         #s  t    w  c
@@ -116,9 +124,9 @@ def test_2():
 
     graph.print_graph()
 
-    test_graph_v2(graph, source_node = 0, destination_node = 6, weight = 6)
+    test_label_recursive(graph, source_node = 0, destination_node = 6, weight = 6)
 
-def test_3():
+def test_3_moderate_graph_spantree():
     graph = WCGraph({
         #edge    constraint
         #s  t    w  c
@@ -139,7 +147,7 @@ def test_3():
 
 
     graph.print_graph()
-    test_graph_v3(graph, source_node = 0, destination_node = 6, weight = 6)
+    test_label_spantree(graph, source_node = 0, destination_node = 6, weight = 6)
 
 
 def test_medium_graph():
@@ -147,7 +155,7 @@ def test_medium_graph():
     graph: WCGraph = WCGraph.get_arbitrary_graph(n = num_nodes, mean_weight = 5, mean_cost = 5)
 
     try:
-        test_graph_v2(graph, source_node = 0, destination_node = num_nodes - 1, weight = 100) 
+        test_label_recursive(graph, source_node = 0, destination_node = num_nodes - 1, weight = 100) 
     except Exception as error:
         graph.save_to_json("LabelAlgorithm_MediumGraph_Crash")
         print(f"Error: {error.__doc__}. Saving graph.")
@@ -163,7 +171,7 @@ def test_large_graph():
     graph: WCGraph = WCGraph.get_arbitrary_graph(n = num_nodes, mean_weight = 10, mean_cost = 5)
 
     try:
-        labels = test_graph_v3(graph, source_node = 0, destination_node = num_nodes - 1, weight = 49) 
+        labels = test_label_recursive(graph, source_node = 0, destination_node = num_nodes - 1, weight = 49) 
     except Exception as error:
         graph.save_to_json("LabelAlgorithm_LargeGraph_Crash")
         print(f"Error: {error.__doc__}. Saving graph.")
@@ -182,10 +190,10 @@ def test_large_graph():
 def test_massive_graph():
     num_nodes = 100
     graph: WCGraph = WCGraph.get_arbitrary_graph(n = num_nodes, mean_weight = 10, mean_cost = 5)
-    labels: LabelAlgorithm
+    labels: LabelAlgorithmBase
 
     try:
-        labels = test_graph_v2(graph, source_node = 0, destination_node = num_nodes - 1, weight = num_nodes) 
+        labels = test_label_recursive(graph, source_node = 0, destination_node = num_nodes - 1, weight = num_nodes) 
     except Exception as error:
         graph.save_to_json("LabelAlgorithm_MassiveGraph_Crash")
         print(f"Error: {error.__doc__}. Saving graph.")
@@ -205,7 +213,7 @@ def test_load(graph_name: str):
     graph: WCGraph = WCGraph.load_json_graph(graph_name)
     
     try:
-        test_graph_v1(graph, source_node = 0, destination_node = 49, weight  = 1000)
+        test_label_iterative(graph, source_node = 0, destination_node = 49, weight  = 1000)
     except:
         graph.print_graph(show_minimal_output = True)
         print(f"\n\nnum cycles: {len(list(networkx.simple_cycles(graph.networkx_graph)))}")
@@ -216,16 +224,16 @@ def main():
     print("Label Algorithm Test ------------------------------------")
 
     # Basic graph tests
-    #test_1()
-    #test_2()
-    # test_3()
+    test_1_simple_graph_on_all()
+    # test_2_moderate_graph_rec()
+    # test_3_moderate_graph_spantree()
 
 
     # Medium graph test
     # test_medium_graph()
 
     # Large graph test
-    test_large_graph()
+    # test_large_graph()
 
     # Massive Graph Test
     # test_massive_graph()
