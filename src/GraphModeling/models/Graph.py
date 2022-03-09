@@ -199,7 +199,7 @@ class Graph:
         for edge in self.edges:
             self.connection_matrix[edge[0]][edge[1]] = 1
 
-    # Static/Class Function
+    @staticmethod
     def get_nodes(edges: List[Tuple[int, int]]) -> List[int]:
         """
         Returns a list of nodes given a list of edges
@@ -220,7 +220,7 @@ class Graph:
         nodes.sort()
         return nodes
 
-    # Static/Class Function
+    @staticmethod
     def _gen_zero_n_square_matrix(edges: List[Tuple[int, int]]) -> numpy.ndarray:
         """
         Generates an nxn zero square matrix based on the list of edges

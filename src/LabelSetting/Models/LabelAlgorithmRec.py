@@ -1,11 +1,15 @@
 from lib2to3.pytree import Node
-from typing import Tuple
+from typing import List, Tuple
 from src.GraphModeling.models.WCGraph import WCGraph
 from src.LabelSetting.Models.LabelAlgorithmBase import LabelAlgorithmBase
 from src.LabelSetting.Models.NodeLabel import NodeLabel
 
 
 class LabelAlgorithmRec(LabelAlgorithmBase):
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.min_percent_remain: float = 0.1
 
     def run_algorithm(self, graph: WCGraph, source_node: int, max_weight: int):
         """
@@ -16,7 +20,8 @@ class LabelAlgorithmRec(LabelAlgorithmBase):
         Args:
             graph (WCGraph): the weight-constrained graph
             source_node (int): the index that defines the source node
-            max_weight (itn): the maximum weight constraint
+            max_weight (int): the maximum weight constraint
+            min_percent_remain (float): the minimum percentage of remaining nodes to switch searching method
         """
         self.graph = graph
         self.source_node = source_node
@@ -31,7 +36,7 @@ class LabelAlgorithmRec(LabelAlgorithmBase):
             # Step 1b: select an untreated index of the node such that the total weight is minimal
             #   meaning: given node i, select node index k from the list of untreated incoming nodes to i such 
             #            that the weight of the edge (k, i) is the smallest among incoming edges to i
-            current_node: NodeLabel = self._rec_next_node(self.source_node)
+            current_node: NodeLabel = self._get_next_node(self.source_node, self.min_percent_remain)
             print(f"Current Node: {current_node.node_index}")
             if current_node is not None:
                 i = current_node.node_index
@@ -175,6 +180,62 @@ class LabelAlgorithmRec(LabelAlgorithmBase):
             else:
                 print("Error: untreated nodes remain yet no next node found")
                 break
+    
+    def _get_next_node(self, from_node: int, min_percent_remain: float = 0.1) -> NodeLabel | None:
+        """
+        Finds the next node to be treated. Uses the recursive algorithm to walk from the source to each if there
+        many nodes remaining. If only a few remain (determined by a given percentage), then go to those nodes
+        directly.
+
+        Args:
+            from_node (int): node index to check to begin search at as the root
+            min_percent_remain (float, optional): the minimum percentage of remaining nodes to switch searching method. Defaults to 0.01.
+
+        Returns:
+            NodeLabel | None:  the next node to treat
+        """
+        next_node: NodeLabel | None = None
+
+        remaining_nodes = []
+
+        for node, node_label in self.node_labels.items():
+            if node_label.num_untreated_nodes() > 0:
+                remaining_nodes.append(node)
+        
+        percent_left: float = len(remaining_nodes) / len(self.node_labels.keys())
+
+        if percent_left > min_percent_remain:
+            next_node = self._rec_next_node(from_node)
+        else:
+            print(f"remaining nodes: {remaining_nodes}")
+            for node in remaining_nodes:
+                next_node = self._find_earliest_remaining_node(node)
+                if next_node:
+                    break
+
+        return next_node
+    
+    def _find_earliest_remaining_node(self, node: int) -> NodeLabel:
+        """
+        Given a node index with untreated labels, it checks if the incoming nodes to the node also have
+        untreated labels. If any do, it continues down that path until it finds a node with untreated labels
+        without any direct incoming nodes that also need to be treated. 
+
+        Args:
+            node (int): a remaining node to start searching from
+
+        Returns:
+            _type_: a node label that needs to be treated.
+        """
+        earliest_remaining_node = self.node_labels[node]
+
+        for incoming_node in self.node_labels[node].incoming_nodes:
+            if self.node_labels[incoming_node].num_untreated_nodes() > 0:
+                earliest_remaining_node = self._find_earliest_remaining_node(incoming_node)
+                break
+
+        return earliest_remaining_node
+
 
     def _rec_next_node(self, from_node: int) -> NodeLabel | None:
         """
