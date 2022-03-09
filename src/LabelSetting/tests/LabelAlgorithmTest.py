@@ -4,7 +4,7 @@ import networkx
 from types import LambdaType
 from src.GraphModeling.models.Graph import Graph
 from src.GraphModeling.models.WCGraph import WCGraph
-from src.LabelSetting.Models.LabelAlgorithm import LabelAlgorithmBase
+from src.LabelSetting.Models.LabelAlgorithmBase import LabelAlgorithmBase
 
 from src.GraphModeling.tests.WCGraphTest import print_graph_details, print_matrix
 from src.LabelSetting.Models.LabelAlgorithmIter import LabelAlgorithmIter

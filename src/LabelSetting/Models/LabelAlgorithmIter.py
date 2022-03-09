@@ -1,10 +1,10 @@
 from src.GraphModeling.models.WCGraph import WCGraph
-from src.LabelSetting.Models.LabelAlgorithm import LabelAlgorithmBase
+from src.LabelSetting.Models.LabelAlgorithmBase import LabelAlgorithmBase
 from src.LabelSetting.Models.NodeLabel import NodeLabel
 
 
 class LabelAlgorithmIter(LabelAlgorithmBase):
-    
+
     def run_algorithm(self, graph: WCGraph, source_node: int, max_weight: int):
         """
         Runs the Label Setting Algorithm on the given weight-constrained graph with the given source node.
