@@ -193,7 +193,7 @@ def test_large_graph():
 
 def test_massive_graph():
     num_nodes = 100
-    graph: WCGraph = WCGraph.get_arbitrary_graph(n = num_nodes, mean_weight = 10, mean_cost = 5)
+    graph: WCGraph = WCGraph.get_arbitrary_graph(n = num_nodes, mean_weight = 10, mean_cost = 5, peak=35)
     labels: LabelAlgorithmBase
 
     try:
