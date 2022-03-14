@@ -11,10 +11,8 @@ import networkx
 
 def main():
     # for i in range(1,6):
-    graph = get_arbitrary_graph(6,5,3,std_weight=2)
-    graph.print_graph(picture_name = f"resources/ArbitraryGraphTestResults/arb6graph_spiral", show_minimal_output=False, DELETE_ME=True)
-    graph.print_graph(picture_name = f"resources/ArbitraryGraphTestResults/arb6graph", show_minimal_output=False)
-    graph.print_graph(picture_name = f"resources/ArbitraryGraphTestResults/arb6graph_minout",show_minimal_output=True)
+    graph = WCGraph.get_arbitrary_graph(30,5,3,std_weight=2, peak=10)
+    graph.print_graph(picture_name = f"resources/ArbitraryGraphTestResults/TEST", show_minimal_output=True)
         # print(f"Paths of the graph {i}")
         # print_paths(graph.get_simple_paths())
         # print(f"Nodes in the graph: {WCGraph.get_nodes(graph.edges)}")
@@ -40,7 +38,7 @@ def get_random_weight_cost(mean_weight: int, mean_cost: int, std_weight:int=1, s
     
     return (random_weight,random_cost)
 
-def get_arbitrary_graph(n: int, mean_weight: int, mean_cost: int, std_weight:int=1, std_cost:int=1) -> Graph:
+def get_arbitrary_graph(n: int, mean_weight: int, mean_cost: int, std_weight:int=1, std_cost:int=1, peak: int=5) -> Graph:
     """Generates arbitrary WC graph with n nodes with normally distributed weights and costs
 
     Args:
@@ -49,18 +47,23 @@ def get_arbitrary_graph(n: int, mean_weight: int, mean_cost: int, std_weight:int
         mean_cost (int): mean cost
         std_weight (int): standard deviation of weight
         std_cost (int): standard deviation of cost
+        peak (int): max number of nodes ahead a node can have an edge to
 
     Returns:
         Graph: arbitary WC graph with (w,c) normally distributed
     """
     graphDict = {}
-    #Loop i range(0,n)
+    #Loop i range(0,n-1)
     for i in range(0,n-1):
-        #Random Noe range(i,n) # of outgoing edges
-        N_oe = r.randint(1,n-i) if n-i>1 else 1
-        #print("i :", i, "\tN_oe: ", N_oe)
+        #Random Noe range(i,n-i) # of outgoing edge
+        #TODO: Adjust number of outgoing nodes so you don't go over for peaking
+        n_forward = min(n-i-1, peak)
+        N_oe = r.randint(1,n_forward+1) if n_forward > 1 else 1 #num outgoing edges
+        # print([n_forward,N_oe])
+        print("i:", i, "\tn_forward:", n_forward, "\tN_oe:", N_oe)
         #Choose Noe unique nodes range(1,n) delta_o[]
-        delta_o = r.choice([*range(i+1,n)], N_oe, replace=False) if i!=n-1 else [n]
+        #TODO: Peaking variable happens here
+        delta_o = r.choice([*range(i+1,min(n-1,i+peak)+1)], N_oe, replace=False) if i!=n-1 else [n]
         #For each j in delta_o[], add edge (i,j)
         for j in delta_o:
             graphDict[i,j] = get_random_weight_cost(mean_weight, mean_cost, std_weight=std_weight, std_cost=std_cost)
@@ -71,8 +74,9 @@ def get_arbitrary_graph(n: int, mean_weight: int, mean_cost: int, std_weight:int
                 oneInNode = True
                 break
         if not oneInNode and i != 0:
+            #TODO: Adjust range to fit peaking variable
             #Choose node incoming n_in range(0,i-1)
-            n_in = r.randint(0,i-1) if i>1 else 0
+            n_in = r.randint(max(0,i-peak),i-1) if i>1 else 0
             #Add edge (n_in,i)
             graphDict[n_in,i] = get_random_weight_cost(mean_weight, mean_cost, std_weight=std_weight, std_cost=std_cost)
         

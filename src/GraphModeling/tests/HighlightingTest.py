@@ -2,7 +2,7 @@ import numpy
 from collections.abc import Sequence
 from ..models.WCGraph import WCGraph
 import networkx
-import matplotlib.pyplot as pyplot
+#import matplotlib.pyplot as pyplot
 
 # #Create some graph
 # graph_dict = {
