@@ -62,10 +62,6 @@ class Graph:
         if edge_labels and not show_minimal_output:
             networkx.draw_networkx_edge_labels(self.networkx_graph, edge_labels = edge_labels, pos = networkx.circular_layout(self.networkx_graph))
 
-        if picture_name != "":
-            #TODO: Add a parameter to save this in the folder the .py file running the program is in or choice of location
-            pyplot.savefig(picture_name) #save as png
-            
         if len(highlight_edges)>0:
             networkx.draw_networkx_edges(
                 self.networkx_graph,
@@ -75,6 +71,11 @@ class Graph:
                 alpha=0.5,
                 edge_color="tab:red",
             )
+            
+        if picture_name != "":
+            #TODO: Add a parameter to save this in the folder the .py file running the program is in or choice of location
+            pyplot.savefig(picture_name) #save as png
+            
         pyplot.show() #display
 
     def get_simple_paths(self, source_node: int = 0, destination_node: int | None = None) -> List[List[int]]:
