@@ -70,6 +70,7 @@ class Graph:
                 width=line_width,
                 alpha=0.5,
                 edge_color="tab:red",
+                arrows = not show_minimal_output,
             )
             
         if picture_name != "":
