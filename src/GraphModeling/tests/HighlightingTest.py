@@ -50,4 +50,4 @@ graph_2 = WCGraph({
         (2, 4): (1, 2),
         (3, 4): (6, 2),
     })
-WCGraph.print_graph(graph_2, highlight_edges=[(0,1),(1,4)])
+WCGraph.print_graph(graph_2, picture_name = f"resources/ArbitraryGraphTestResults/TEST", highlight_edges=[(0,1),(1,4)], show_minimal_output = True)
