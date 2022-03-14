@@ -26,7 +26,9 @@ def print_test_results(graph: WCGraph, labels: LabelAlgorithmBase, destination_n
     for node in efficient_labels.keys():
         print(f"|    |   {labels.node_labels[destination_node].paths[node]}")
     
-    path = labels.node_labels[destination_node].get_lowest_weight_path()
+    path = []
+    for node in efficient_labels.keys():
+        path.extend(labels.node_labels[destination_node].paths[node])
     edges = []
     for i in range(len(path) - 1):
         edges.append((path[i], path[i + 1]))
@@ -232,10 +234,10 @@ def main():
     # test_medium_graph()
 
     # Large graph test
-    # test_large_graph()
+    test_large_graph()
 
     # Massive Graph Test
-    test_massive_graph()
+    # test_massive_graph()
 
     # Test loaded graph
     # test_load("LabelAlgorithm_LargeGraph_UnexpectedCrash", 50)
