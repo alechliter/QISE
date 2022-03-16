@@ -1,6 +1,6 @@
 from src.GraphModeling.models.WCGraph import WCGraph
-from src.LabelSetting.Models.LabelAlgorithmBase import LabelAlgorithmBase
-from src.LabelSetting.Models.NodeLabel import NodeLabel
+from src.LabelSetting.models.LabelAlgorithmBase import LabelAlgorithmBase
+from src.LabelSetting.models.NodeLabel import NodeLabel
 
 
 class LabelAlgorithmIter(LabelAlgorithmBase):

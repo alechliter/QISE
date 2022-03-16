@@ -1,7 +1,7 @@
 from tkinter.tix import Tree
 from typing import Dict, List
 
-from src.LabelSetting.Models.NodeLabel import NodeLabel
+from src.LabelSetting.models.NodeLabel import NodeLabel
 
 class TreeNode:
     def __init__(self, index: int) -> None:
