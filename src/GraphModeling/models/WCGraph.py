@@ -233,6 +233,7 @@ class WCGraph(Graph):
         return f"resources/SavedGraphs/{filename}.json"
 
     @staticmethod
+    #TODO: Maybe turn this into a lambda function inside of the arbitrary graph generatork
     def get_random_weight_cost(mean_weight: int, mean_cost: int, std_weight:int=1, std_cost:int=1) -> tuple[int, int]:
         """Generates a random cost-weight tuple based on input. Currently normal dist, but could test with other modes
 
