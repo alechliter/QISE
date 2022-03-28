@@ -64,6 +64,8 @@ def test_label_recursive(graph: WCGraph, source_node: int, destination_node: int
 
     labels = LabelAlgorithmRec()
 
+    labels.min_percent_remain = 0.25
+
     labels.run_algorithm(graph, source_node, weight)
 
     print_test_results(graph, labels, destination_node)
@@ -205,6 +207,20 @@ def test_massive_graph():
         graph.save_to_json("LabelAlgorithm_MassiveGraph_UnexpectedCrash")
         print(f"Unexpected error: {sys.exc_info()[0]}")
 
+def test_1000_node_graph():
+    num_nodes = 1000
+    graph: WCGraph = WCGraph.get_arbitrary_graph(n = num_nodes, mean_weight = 5, mean_cost = 5, peak=100)
+    labels: LabelAlgorithmBase
+
+    try:
+        labels = test_label_recursive(graph, source_node = 0, destination_node = num_nodes - 1, weight = num_nodes * 2) 
+    except Exception as error:
+        graph.save_to_json("LabelAlgorithm_1000NodeGraph_Crash")
+        print(f"Error: {error.__doc__}. Saving graph.")
+    except:
+        graph.save_to_json("LabelAlgorithm_1000NodeGraph_UnexpectedCrash")
+        print(f"Unexpected error: {sys.exc_info()[0]}")
+
 
 def test_load(graph_name: str, num_nodes: int):
     graph: WCGraph = WCGraph.load_json_graph(graph_name)
@@ -234,11 +250,14 @@ def main():
     # test_medium_graph()
 
     # Large graph test
-    test_large_graph()
+    # test_large_graph()
 
-    # Massive Graph Test
+    # 100 Node Graph Test
     # test_massive_graph()
 
+    # 1000 Node graph
+    test_1000_node_graph()
+    
     # Test loaded graph
     # test_load("LabelAlgorithm_LargeGraph_UnexpectedCrash", 50)
     # test_load("LabelAlgorithm_MediumGraph_UnexpectedCrash", 35)
