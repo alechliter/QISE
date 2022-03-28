@@ -23,11 +23,13 @@ def print_graph_details(graph: WCGraph):
     print("Connection Matrix")
     print_matrix(graph.connection_matrix)
 
-    print("Weight Matrix")
-    print_matrix(graph.weight_matrix)
+    if graph.weight_matrix:
+        print("Weight Matrix")
+        print_matrix(graph.weight_matrix)
 
-    print("Cost Matrix")
-    print_matrix(graph.cost_matrix)
+    if graph.cost_matrix:
+        print("Cost Matrix")
+        print_matrix(graph.cost_matrix)
 
 def test_graph(graph: WCGraph, weight):
     print_graph_details(graph)

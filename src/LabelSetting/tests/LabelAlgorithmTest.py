@@ -44,7 +44,7 @@ def print_graph_info(graph: WCGraph, title: str):
     print(graph.weight_matrix)
     print(graph.cost_matrix)
 
-    for node_index in Graph.get_nodes(graph.edges):
+    for node_index in graph.nodes:
         # find the incoming and outgoing nodes of the current node
         print(f"Incoming Nodes for node {node_index}: {graph.get_incoming_nodes(node_index)}")
         print(f"Outgoing Nodes for node {node_index}: {graph.get_outgoing_nodes(node_index)}")
@@ -156,7 +156,7 @@ def test_3_moderate_graph_spantree():
 
 def test_small_graph():
     num_nodes = 5
-    graph: WCGraph = WCGraph.get_arbitrary_graph(n = num_nodes, mean_weight = 2, mean_cost = 6)
+    graph: WCGraph = WCGraph.get_arbitrary_graph(n = num_nodes, mean_weight = 2, mean_cost = 6, peak = num_nodes)
 
     try:
         test_label_recursive(graph, source_node = 0, destination_node = num_nodes - 1, weight = 50) 
@@ -169,7 +169,7 @@ def test_small_graph():
 
 def test_medium_graph():
     num_nodes = 35
-    graph: WCGraph = WCGraph.get_arbitrary_graph(n = num_nodes, mean_weight = 5, mean_cost = 5)
+    graph: WCGraph = WCGraph.get_arbitrary_graph(n = num_nodes, mean_weight = 5, mean_cost = 5, peak = int(num_nodes / 2))
 
     try:
         test_label_recursive(graph, source_node = 0, destination_node = num_nodes - 1, weight = num_nodes * 10) 
@@ -182,7 +182,7 @@ def test_medium_graph():
 
 def test_large_graph():
     num_nodes = 50
-    graph: WCGraph = WCGraph.get_arbitrary_graph(n = num_nodes, mean_weight = 10, mean_cost = 5)
+    graph: WCGraph = WCGraph.get_arbitrary_graph(n = num_nodes, mean_weight = 10, mean_cost = 5, peak = int(num_nodes / 2))
 
     try:
         labels = test_label_recursive(graph, source_node = 0, destination_node = num_nodes - 1, weight = num_nodes * 10) 
@@ -195,7 +195,7 @@ def test_large_graph():
 
 def test_massive_graph():
     num_nodes = 100
-    graph: WCGraph = WCGraph.get_arbitrary_graph(n = num_nodes, mean_weight = 10, mean_cost = 5, peak=35)
+    graph: WCGraph = WCGraph.get_arbitrary_graph(n = num_nodes, mean_weight = 10, mean_cost = 5, peak = int(num_nodes / 2))
     labels: LabelAlgorithmBase
 
     try:
@@ -246,17 +246,17 @@ def main():
     # Small Arbitrary Graph Test
     # test_small_graph()
 
-    # Medium graph test
-    # test_medium_graph()
+    # 35 Node graph test
+    test_medium_graph()
 
-    # Large graph test
+    # 50 Node graph test
     # test_large_graph()
 
     # 100 Node Graph Test
     # test_massive_graph()
 
     # 1000 Node graph
-    test_1000_node_graph()
+    # test_1000_node_graph()
     
     # Test loaded graph
     # test_load("LabelAlgorithm_LargeGraph_UnexpectedCrash", 50)

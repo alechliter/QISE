@@ -26,7 +26,7 @@ class LabelAlgorithmBase:
         self.max_weight: int = None
 
     def _initialize_label_setup(self) -> None:
-        for node_index in Graph.get_nodes(self.graph.edges):
+        for node_index in self.graph.nodes:
             # find the incoming and outgoing nodes of the current node
             incoming_nodes = self.graph.get_incoming_nodes(node_index)
             outgoing_nodes = self.graph.get_outgoing_nodes(node_index)

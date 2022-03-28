@@ -11,6 +11,7 @@ class Graph:
 
     members:
         + edges (List[int]): a list of (from, to) node tuples
+        + nodes (List[int]): a list of nodes (sorted in increasing order) in the graph
         + direction_matrix (numpy.ndarray): matrix of the directed edges between nodes
         + networkx_graph (networkx.DiGraph): networkx object representation of graph
     """
@@ -26,6 +27,7 @@ class Graph:
         self.edges: List[int] = edges
         self.connection_matrix: numpy.ndarray
         self.networkx_graph: networkx.DiGraph
+        self.nodes = Graph.get_nodes(self.edges)
 
         # Initialize connection matrix using the list of edges
         self._initialize_connection_matrix()
@@ -77,7 +79,7 @@ class Graph:
             )
         pyplot.show() #display
 
-    def get_simple_paths(self, source_node: int = 0, destination_node: int | None = None) -> List[List[int]]:
+    def get_simple_paths(self, source_node: int | None = None, destination_node: int | None = None) -> List[List[int]]:
         """
         Returns an array of simple paths in the graph
 
@@ -90,8 +92,11 @@ class Graph:
         """
         paths = []
 
+        if source_node is None:
+            source_node = self.nodes[0]
+
         if destination_node is None:
-            destination_node = len(Graph.get_nodes(self.edges)) - 1
+            destination_node = self.nodes[-1]
 
         if self.networkx_graph and destination_node != source_node:
             paths = [path for path in networkx.all_simple_paths(self.networkx_graph, source_node, destination_node)]
@@ -137,7 +142,7 @@ class Graph:
         """
         incoming_nodes = []
         # the list of incoming nodes is the corresponding column in the connections matrix
-        matrix_column = self.connection_matrix[:, node]
+        matrix_column = self.connection_matrix[:, self.nodes.index(node)]
         # add every node with an outgoing edge to the current node
         for i in range(len(matrix_column)):
             if matrix_column[i] != 0:
@@ -157,12 +162,25 @@ class Graph:
         """
         outgoing_nodes = []
         # the list of outoing nodes is the corresponding row in the connections matrix
-        matrix_row = self.connection_matrix[node, :]
+        matrix_row = self.connection_matrix[self.nodes.index(node), :]
         # add every node with an incoming edge from the current node
         for i in range(len(matrix_row)):
             if matrix_row[i] != 0:
                 outgoing_nodes.append(i)
         return outgoing_nodes
+    
+    def get_con_matrix_element(self, from_node: int, to_node: int) -> int:
+        """
+        Returns the matrix element M[from_node][to_node]
+
+        Args:
+            from_node (int): the origin node of an edge
+            to_node (int): the destination node of an edge
+
+        Returns:
+            int: the connection matrix element value at that position.
+        """
+        return self.connection_matrix[self.nodes.index(from_node)][self.nodes.index(to_node)]
     
     def _initialize_networkx_graph(self) -> None:
         """
@@ -171,7 +189,7 @@ class Graph:
         """
         self.networkx_graph = networkx.DiGraph()
         # Add nodes
-        self.networkx_graph.add_nodes_from(Graph.get_nodes(self.edges))
+        self.networkx_graph.add_nodes_from(self.nodes)
         # Add edges
         self.networkx_graph.add_edges_from(self.edges)
 
@@ -197,7 +215,7 @@ class Graph:
         self.connection_matrix = Graph._gen_zero_n_square_matrix(self.edges)
 
         for edge in self.edges:
-            self.connection_matrix[edge[0]][edge[1]] = 1
+            self.connection_matrix[self.nodes.index(edge[0])][self.nodes.index(edge[1])] = 1
 
     @staticmethod
     def get_nodes(edges: List[Tuple[int, int]]) -> List[int]:
