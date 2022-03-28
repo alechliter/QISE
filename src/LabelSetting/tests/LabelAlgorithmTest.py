@@ -4,13 +4,13 @@ import networkx
 from types import LambdaType
 from src.GraphModeling.models.Graph import Graph
 from src.GraphModeling.models.WCGraph import WCGraph
-from src.LabelSetting.Models.LabelAlgorithmBase import LabelAlgorithmBase
+from src.LabelSetting.models.LabelAlgorithmBase import LabelAlgorithmBase
 
 from src.GraphModeling.tests.WCGraphTest import print_graph_details, print_matrix
-from src.LabelSetting.Models.LabelAlgorithmIter import LabelAlgorithmIter
-from src.LabelSetting.Models.LabelAlgorithmRec import LabelAlgorithmRec
-from src.LabelSetting.Models.LabelAlgorithmSpanTree import LabelAlgorithmSpanTree
-from src.LabelSetting.Models.SpanningTree import SpanningTree
+from src.LabelSetting.models.LabelAlgorithmIter import LabelAlgorithmIter
+from src.LabelSetting.models.LabelAlgorithmRec import LabelAlgorithmRec
+from src.LabelSetting.models.LabelAlgorithmSpanTree import LabelAlgorithmSpanTree
+from src.LabelSetting.models.SpanningTree import SpanningTree
 
 def print_test_results(graph: WCGraph, labels: LabelAlgorithmBase, destination_node: int):
     for node, label in labels.node_labels.items():
