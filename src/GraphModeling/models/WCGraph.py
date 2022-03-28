@@ -57,7 +57,7 @@ class WCGraph(Graph):
             #Random Noe range(i,n) # of outgoing edges
             n_forward = min(n-i-1, peak)
             N_oe = r.randint(1,n_forward+1) if n_forward > 1 else 1 #num outgoing edges
-            print("i:", i, "\tn_forward:", n_forward, "\tN_oe:", N_oe)
+            # print("i:", i, "\tn_forward:", n_forward, "\tN_oe:", N_oe)
             #Choose Noe unique nodes range(1,n) delta_o[]
             #TODO: Peaking variable happens here
             delta_o = r.choice([*range(i+1,min(n-1,i+peak)+1)], N_oe, replace=False) if i!=n-1 else [n]
@@ -283,6 +283,7 @@ class WCGraph(Graph):
         return f"resources/SavedGraphs/{filename}.json"
 
     @staticmethod
+    #TODO: Maybe turn this into a lambda function inside of the arbitrary graph generatork
     def get_random_weight_cost(mean_weight: int, mean_cost: int, std_weight:int=1, std_cost:int=1) -> tuple[int, int]:
         """Generates a random cost-weight tuple based on input. Currently normal dist, but could test with other modes
 

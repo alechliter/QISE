@@ -1,8 +1,8 @@
 from typing import Tuple
 from src.GraphModeling.models.WCGraph import WCGraph
-from src.LabelSetting.Models.LabelAlgorithmBase import LabelAlgorithmBase
-from src.LabelSetting.Models.NodeLabel import NodeLabel
-from src.LabelSetting.Models.SpanningTree import SpanningTree, TreeNode
+from src.LabelSetting.models.LabelAlgorithmBase import LabelAlgorithmBase
+from src.LabelSetting.models.NodeLabel import NodeLabel
+from src.LabelSetting.models.SpanningTree import SpanningTree, TreeNode
 
 
 class LabelAlgorithmSpanTree(LabelAlgorithmBase):
