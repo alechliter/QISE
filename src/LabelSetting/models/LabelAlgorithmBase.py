@@ -18,6 +18,8 @@ class LabelAlgorithmBase:
         + source_node (int): index identifier of the source node
         + graph (WCGraph): the weight-constrained graph
     """
+    
+    suppress_output = False
 
     def __init__(self) -> None:
         self.node_labels: Dict[int, NodeLabel] = {}
@@ -54,4 +56,9 @@ class LabelAlgorithmBase:
                 # union of the remaining labels with the current node's untreated labels
                 remaining_labels.update(node_label.get_untreated_nodes())
         return remaining_labels
+    
+    @staticmethod
+    def _report_progress(message):
+        if not LabelAlgorithmBase.suppress_output:
+            print(message)
 

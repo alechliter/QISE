@@ -6,10 +6,11 @@ from src.LabelSetting.models.NodeLabel import NodeLabel
 
 
 class LabelAlgorithmRec(LabelAlgorithmBase):
+    suppress_output = False
 
     def __init__(self) -> None:
         super().__init__()
-        self.min_percent_remain: float = 0.1
+        self.min_percent_remain: float = 0.9
 
     def run_algorithm(self, graph: WCGraph, source_node: int, max_weight: int):
         """
@@ -37,7 +38,7 @@ class LabelAlgorithmRec(LabelAlgorithmBase):
             #   meaning: given node i, select node index k from the list of untreated incoming nodes to i such 
             #            that the weight of the edge (k, i) is the smallest among incoming edges to i
             current_node: NodeLabel = self._get_next_node(self.source_node, self.min_percent_remain)
-            print(f"Current Node: {current_node.node_index}")
+            LabelAlgorithmBase._report_progress(f"Current Node: {current_node.node_index}")
             if current_node is not None:
                 i = current_node.node_index
                 k_in: int = None
@@ -93,7 +94,7 @@ class LabelAlgorithmRec(LabelAlgorithmBase):
                 current_node.treated_nodes.append(k_in)
                 current_node.needs_visit = False
             else:
-                print("Error: untreated nodes remain yet no next node found")
+                LabelAlgorithmBase._report_progress("Error: untreated nodes remain yet no next node found")
                 break
     
     def gen_all_possible_labels(self, graph: WCGraph, source_node: int, max_weight: int):
@@ -125,7 +126,7 @@ class LabelAlgorithmRec(LabelAlgorithmBase):
             #   meaning: given node i, select node index k from the list of untreated incoming nodes to i such 
             #            that the weight of the edge (k, i) is the smallest among incoming edges to i
             current_node: NodeLabel = self._rec_next_node(self.source_node)
-            print(f"Current Node: {current_node.node_index}")
+            LabelAlgorithmBase._report_progress(f"Current Node: {current_node.node_index}")
             if current_node is not None:
                 i = current_node.node_index
                 k_in: int = None
@@ -178,7 +179,7 @@ class LabelAlgorithmRec(LabelAlgorithmBase):
                 current_node.treated_nodes.append(k_in)
                 current_node.needs_visit = False
             else:
-                print("Error: untreated nodes remain yet no next node found")
+                LabelAlgorithmBase._report_progress("Error: untreated nodes remain yet no next node found")
                 break
     
     def _get_next_node(self, from_node: int, min_percent_remain: float = 0.1) -> NodeLabel | None:
@@ -207,7 +208,7 @@ class LabelAlgorithmRec(LabelAlgorithmBase):
         if percent_left > min_percent_remain:
             next_node = self._rec_next_node(from_node)
         else:
-            print(f"remaining nodes: {remaining_nodes}")
+            LabelAlgorithmBase._report_progress(f"remaining nodes: {remaining_nodes}")
             for node in remaining_nodes:
                 next_node = self._find_earliest_remaining_node(node)
                 if next_node:

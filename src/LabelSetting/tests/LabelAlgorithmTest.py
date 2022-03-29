@@ -64,7 +64,7 @@ def test_label_recursive(graph: WCGraph, source_node: int, destination_node: int
 
     labels = LabelAlgorithmRec()
 
-    labels.min_percent_remain = 0.25
+    labels.min_percent_remain = 0.9
 
     labels.run_algorithm(graph, source_node, weight)
 
@@ -247,13 +247,13 @@ def main():
     # test_small_graph()
 
     # 35 Node graph test
-    test_medium_graph()
+    # test_medium_graph()
 
     # 50 Node graph test
     # test_large_graph()
 
     # 100 Node Graph Test
-    # test_massive_graph()
+    test_massive_graph()
 
     # 1000 Node graph
     # test_1000_node_graph()
