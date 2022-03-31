@@ -44,6 +44,15 @@ def plot_results(results: Dict[int, float]):
     axis[1].set(ylabel = "time (ln(s))")
     axis[1].set_yscale("log", base = numpy.e)
     axis[1].set_yticklabels(["$%.3f$" % y for y in results.values()])
+
+    for ax in axis:
+        x_limit = ax.get_xlim()
+        y_limit = ax.get_ylim()
+        x_axis = range(int(x_limit[0]), int(x_limit[1]))      
+        a = 0.0161685375933541 # hardcoded estimation of e^(ax) - 1
+        ax.plot( x_axis, [ numpy.exp(x * a) - 1 for x in x_axis ], 'r:' )
+        ax.set_xlim(x_limit) 
+        ax.set_ylim(y_limit)
     
     plt.show()
 
