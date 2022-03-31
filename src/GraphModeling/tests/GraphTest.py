@@ -24,5 +24,15 @@ def main():
 
     # graph.print_graph()
 
+    graph = Graph([(1, 5), (2, 3), (2, 1), (5, 10)])
+
+    print("Simple Paths:")
+    print_paths(graph.get_simple_paths())
+
+    print("Connection Matrix")
+    print_matrix(graph.connection_matrix)
+
+    graph.print_graph()
+
 if __name__ == "__main__":
     main()

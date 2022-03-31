@@ -17,28 +17,26 @@ class WCGraph(Graph):
         + weight_matrix (numpy.ndarray): matrix of the weights for each edge
         + cost_matrix (numpy.ndarray): matrix of the costs for each edge
         + wc_edges ( Dict[Tuple[int, int], Tuple[int, int]]): dictionary of edges to (weight, cost)
-
-    note: this might be useless/overkill for our purposes, we could just add everything to the graph class.
     """
 
-    def __init__(self, edges: Dict[Tuple[int, int], Tuple[int, int]]) -> None:
+    def __init__(self, edges: Dict[Tuple[int, int], Tuple[int, int]], initialize_wc_matricies: bool = False) -> None:
         """Creates a new instance of a Weight-Constrained Graph using a dictionary of edges to weights and costs.
 
         Args:
             edges (Mapping): a dictionary of edges to their weights and costs {(from, to): (weight, cost)}
+            initialize_wc_matricies (bool): boolean flag, true = initialize weight and cost matricies.
         """
         
         self.wc_edges = edges
-        self.weight_matrix: numpy.ndarray
-        self.cost_matrix: numpy.ndarray
+        self.weight_matrix: numpy.ndarray | None = None
+        self.cost_matrix: numpy.ndarray | None = None
 
         # Initialize the base class Graph
         super(WCGraph, self).__init__(edges.keys())
 
         # Generate Weight and Cost Matricies
-        self._generate_weight_cost_matricies()
-
-        pass
+        if initialize_wc_matricies:
+            self.generate_weight_cost_matricies();
     
     def get_arbitrary_graph(n: int, mean_weight: int, mean_cost: int, std_weight:int=1, std_cost:int=1, peak: int=5) -> Graph:
         """Generates arbitrary WC graph with n nodes with normally distributed weights and costs
@@ -81,11 +79,37 @@ class WCGraph(Graph):
             
         return WCGraph(graphDict)
     
-    def find_wc_paths(self, weight: int, source_node: int = 0, destination_node: int | None = None) -> List[List[int]]:
+    def get_weight(self, from_node: int, to_node: int) -> int:
+        """Returns the weight of the edge (from_node, to_node)
+
+        Args:
+            from_node (int): origin node of a directed edge
+            to_node (int): destination node of a directed edge
+
+        Returns:
+            int: the weight of the given edge
+        """
+        return self.wc_edges[(from_node, to_node)][0]
+
+    def ge_cost(self, from_node: int, to_node: int) -> int:
+        """Returns the cost of the edge (from_node, to_node)
+
+        Args:
+            from_node (int): origin node of a directed edge
+            to_node (int): destination node of a directed edge
+
+        Returns:
+            int: the cost of the given edge
+        """
+        return self.wc_edges[(from_node, to_node)][1]
+
+    def find_wc_paths(self, weight: int, source_node: int | None = None, destination_node: int | None = None) -> List[List[int]]:
         """Creates a list of each path in the graph that follows the weight constraint.
 
         Args:
             weight (int): the weight constraint for the paths
+            source_node (int | None): source node of the path (Default: None - replaced with the first node in the graph)
+            destination_node (int | None): destination node of the path (Default: None - replaced with the last node in the graph)
 
         Returns:
             List[List[int]]: a list of paths that follow the weight constraint
@@ -162,7 +186,33 @@ class WCGraph(Graph):
         with open(WCGraph.get_json_file_name(graph_name), "w") as file:
             json.dump(json_object, file)
 
-    def _generate_weight_cost_matricies(self):
+    def get_cost_matrix_element(self, from_node: int, to_node: int) -> int:
+        """
+        Returns the matrix element M[from_node][to_node]
+
+        Args:
+            from_node (int): the origin node of an edge
+            to_node (int): the destination node of an edge
+
+        Returns:
+            int: the cost matrix element value at that position.
+        """
+        return self.cost_matrix[self.nodes.index(from_node)][self.nodes.index(to_node)]
+    
+    def get_weight_matrix_element(self, from_node: int, to_node: int) -> int:
+        """
+        Returns the matrix element M[from_node][to_node]
+
+        Args:
+            from_node (int): the origin node of an edge
+            to_node (int): the destination node of an edge
+
+        Returns:
+            int: the weight matrix element value at that position.
+        """
+        return self.weight_matrix[self.nodes.index(from_node)][self.nodes.index(to_node)]
+
+    def generate_weight_cost_matricies(self):
         """
         Generates the weight and cost matrices based on the weights and costs associated with each pair
         in the dictionary wc_edges
@@ -172,8 +222,8 @@ class WCGraph(Graph):
         self.cost_matrix = Graph._gen_zero_n_square_matrix(self.edges)
 
         for edge, constraints in self.wc_edges.items():
-            self.weight_matrix[edge[0] - 1][edge[1] - 1] = constraints[0]
-            self.cost_matrix[edge[0] - 1][edge[1] - 1] = constraints[1]
+            self.weight_matrix[self.nodes.index(edge[0])][self.nodes.index(edge[1])] = constraints[0]
+            self.cost_matrix[self.nodes.index(edge[0])][self.nodes.index(edge[1])] = constraints[1]
     
     def _gen_json_object(self) -> json:
         """

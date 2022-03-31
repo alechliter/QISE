@@ -1,10 +1,10 @@
+from typing import ClassVar
 from src.GraphModeling.models.WCGraph import WCGraph
 from src.LabelSetting.models.LabelAlgorithmBase import LabelAlgorithmBase
 from src.LabelSetting.models.NodeLabel import NodeLabel
 
 
 class LabelAlgorithmIter(LabelAlgorithmBase):
-
     def run_algorithm(self, graph: WCGraph, source_node: int, max_weight: int):
         """
         Runs the Label Setting Algorithm on the given weight-constrained graph with the given source node.
@@ -64,7 +64,7 @@ class LabelAlgorithmIter(LabelAlgorithmBase):
 
                 current_node.treated_nodes.append(k_in)
             else:
-                print("Error: untreated nodes remain yet no next node found")
+                LabelAlgorithmBase._report_progress("Error: untreated nodes remain yet no next node found")
                 break
 
     def _get_next_node(self) -> NodeLabel | None:
@@ -80,6 +80,6 @@ class LabelAlgorithmIter(LabelAlgorithmBase):
             if len(node.get_untreated_nodes()) != 0:
                 next_node = node
                 break
-        print (next_node.node_index)
+        LabelAlgorithmBase._report_progress (next_node.node_index)
 
         return next_node
