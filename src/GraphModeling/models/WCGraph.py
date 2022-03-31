@@ -27,6 +27,7 @@ class WCGraph(Graph):
         Args:
             edges (Mapping): a dictionary of edges to their weights and costs {(from, to): (weight, cost)}
         """
+        
         self.wc_edges = edges
         self.weight_matrix: numpy.ndarray
         self.cost_matrix: numpy.ndarray
@@ -146,7 +147,8 @@ class WCGraph(Graph):
 
         Args:
             picture_name (str, optional): The name of the file to save the picture to. Defaults to "".
-            suppress_text_output: Supresses print statements and edge labels from being printed on the graph
+            show_minimal_output (bool): Supresses print statements and edge labels from being printed on the graph
+            highlight_edges: 
         """
         edge_labels = {}
 
