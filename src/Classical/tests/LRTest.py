@@ -12,10 +12,10 @@ import networkx
 
 def main():
     graph = WCGraph.load_json_graph("LRTestingGraph")
-    max_weight = 50*5
+    max_weight = 400*25
     x = run_label_setting(graph, max_weight)
     
-    graph.print_graph(picture_name = f"resources/ArbitraryGraphTestResults/LRTEST", show_minimal_output = True)
+    # graph.print_graph(picture_name = f"resources/ArbitraryGraphTestResults/LRTEST", show_minimal_output = True)
     
     graphs = []
     # for alph in range(1,2):
@@ -24,16 +24,10 @@ def main():
     LRedges = list(graph_dict.keys())
     
     print("Edges: ", LRedges)
-    print(type(LRedges))
-    # node_set = set({})
-    # for edge in LRedges:
-    #     node_set.add(edge[0])
-    #     node_set.add(edge[1])
-    # LRnodes = list(node_set)
-    # print("Nodes: ", LRnodes)
+    
     graphLR = Graph(LRedges)
-    # meff_edges = get_list_of_edges(meff_path)
-    # graphLR.print_graph(picture_name = f"resources/ArbitraryGraphTestResults/LRTEST"+str(alph), show_minimal_output = True, highlight_edges=meff_edges)
+    meff_edges = get_list_of_edges(meff_path)
+    graphLR.print_graph(picture_name = f"resources/ArbitraryGraphTestResults/LRTESTsubgraph", show_minimal_output = False, highlight_edges=meff_edges)
             
     
 
@@ -41,7 +35,7 @@ def run_label_setting(graph, max_w):
     #Function takes in the graph and a list of efficient paths
     labels = LabelAlgorithmRec()
     labels.run_algorithm(graph, 0, max_weight=max_w)
-    x = labels.node_labels[99].paths.values()
+    x = labels.node_labels[999].paths.values()
     print("Efficient Paths:", list(x))
     return x
 

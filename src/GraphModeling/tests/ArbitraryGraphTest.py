@@ -12,7 +12,7 @@ import networkx
 def main():
     # for i in range(1,6):
     
-    graph = WCGraph.get_arbitrary_graph(100,5,3,std_weight=2, peak=50)
+    graph = WCGraph.get_arbitrary_graph(1000,25,50,std_weight=5, std_cost=5, peak=100)
     graph.save_to_json("LRTestingGraph")
     graph.print_graph(picture_name = f"resources/ArbitraryGraphTestResults/TEST", show_minimal_output=True)
         # print(f"Paths of the graph {i}")
