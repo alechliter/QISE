@@ -10,9 +10,10 @@ from ..models.WCGraph import WCGraph
 import networkx
 
 def main():
-    # for i in range(1,6):
     
-    graph = WCGraph.get_arbitrary_graph(1000,25,50,std_weight=5, std_cost=5, peak=100)
+    num_nodes = 1000
+    peak = int(num_nodes*0.4)
+    graph = WCGraph.get_arbitrary_graph(num_nodes, 25, 50, std_weight=5, std_cost=5, peak=peak)
     graph.save_to_json("LRTestingGraph")
     graph.print_graph(picture_name = f"resources/ArbitraryGraphTestResults/TEST", show_minimal_output=True)
         # print(f"Paths of the graph {i}")
