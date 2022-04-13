@@ -37,14 +37,15 @@ class Graph:
 
         
     def print_graph(self, picture_name: str = "", edge_labels: Dict[Tuple[int, int], str] | None = None, show_minimal_output: bool = False,
-                    highlight_edges = []) -> None:
+                    highlight_edges = Tuple[int, int]) -> None:
         """
         Prints the graph using the networkx graph representation and pyplot.
 
         Args:
             picture_name (str, optional): The name to save the graph image as. Defaults to "".
             edge_labels (Dict[Tuple[int, int], str] | None, optional): The dictionary of edges to labels. Defaults to None.
-            suppress_text_output (bool): Supresses print statements and edge labels from being printed on the graph. Defaults to False
+            show_minimal_output (bool): Supresses print statements and edge labels from being printed on the graph. Defaults to False
+            highlight_edges (Tuple[int,int]): Highlights list of edges
         """
         if(not show_minimal_output):
             print("Nodes on Graph:")
@@ -72,7 +73,7 @@ class Graph:
                 width=line_width,
                 alpha=0.5,
                 edge_color="tab:red",
-                arrows = not show_minimal_output,
+                arrows = False,
             )
             
         if picture_name != "":
