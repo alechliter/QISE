@@ -14,11 +14,9 @@ def main():
     COST_STD_DEVIATION = 10
     MIN_EDGE_DISTANCE = 5
     
-    graph_sizes = [10, 50, 100, 200, 400, 800, 1600, 3200, 6400, 12_800, 25_600, 
-                   51_200, 102_400]
+    graph_sizes = [10, 50, 100, 200, 400, 800, 1600, 3200, 6400, 12_800]
     
     for n in graph_sizes:
-        print(f"Generating graph of size {n}...")
         random_wc_graph = create_random_wc_graph(n = n, mean_weight = MEAN_WEIGHT, 
                                                  mean_cost = MEAN_COST, 
                                                  std_weight = WEIGHT_STD_DEVIATION, 
@@ -27,7 +25,6 @@ def main():
     
         node_link_data = json_graph.node_link_data(random_wc_graph)
         json_object = json.dumps(node_link_data)
-        print(f"Saving graph of size {n}")
         with open(f"./graphs/wc_graph_{n}.json", "w") as fileout:
             fileout.write(json_object)
 
