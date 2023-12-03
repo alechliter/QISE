@@ -39,7 +39,8 @@ def lr_shortest_path(wc_graph: nx.DiGraph, alpha: float) -> list:
 
 
 def evaluate_graphs():
-    graph_sizes = [10, 50, 100, 200, 400, 800, 1600, 3200, 6400, 12_800]
+    graph_sizes = [10, 50, 100, 200, 400, 800, 1600, 3200, 6400, 12_800, 25_600, 
+                   51_200, 102_400]
     ALPHA = 0.5
     for n in graph_sizes:
         f = open(f"./graphs/wc_graph_{str(n)}.json")
