@@ -6,6 +6,9 @@ QISE Capstone Team Repository for Physics 5800
     example:
     python -m src.GraphModeling.tests.GraphTest
 
+https://networkx.org/documentation/stable/
+
+
 Write name here to test if setting up github worked:
 + Adam Lechliter
 + Connor Beheydt
