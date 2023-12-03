@@ -7,6 +7,14 @@ The algorithm used to solve this problem classically is called "Lagrangian relax
 
 weight_cost = cost + alpha\*weight
 
+<<<<<<< HEAD
 We can then apply an existing algorithm that solves the minimum path of a cost graph to find the minimum path of the weight constrained graph.
 # Implementation
 We use the networkx package to generate example graphs and solve the weight_cost graph using the in-build shortest_path() method. Paths are generated using generate_graphs.py and are benchmarked in main.py.
+=======
+    example:
+    python -m src.GraphModeling.tests.GraphTest
+
+Write name here to test if setting up github worked:
++ Adam Lechliter
+>>>>>>> parent of b2cf4cc (Update README.md)
