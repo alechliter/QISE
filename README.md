@@ -16,9 +16,13 @@ We use the networkx package to generate example graphs and solve the weight_cost
     python -m src.GraphModeling.tests.GraphTest
 
 Write name here to test if setting up github worked:
+<<<<<<< HEAD
 + Adam Lechliter
 <<<<<<< HEAD
 >>>>>>> parent of b2cf4cc (Update README.md)
 =======
 + Connor Beheydt
 >>>>>>> parent of c99fa7c (Full functional overhall with mvp benchmarking of path algorithm^ZA)
+=======
++ Adam Lechliter
+>>>>>>> parent of b2cf4cc (Update README.md)
